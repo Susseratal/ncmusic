@@ -10,10 +10,9 @@ If none of this made sense, you now have documented evidence of my stupidity. If
 Love, Iain xoxo
 
 Changelog:
-        
+Done:
+        - [x] Path to directory, list files
 
 To do:
-        
-        - [ ] Path to music and play music files
-
+        - [ ] Gotta fix it all
         - [ ] Album structure       
