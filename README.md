@@ -15,7 +15,9 @@ If none of this made sense, you now have documented evidence of my stupidity. If
 ~ Iain xx
 
 Changelog:
+
 Done:
+
         - [x] Path to directory, list files  
         - [x] List songs and albums accordingly  
 
