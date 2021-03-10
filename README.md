@@ -1,5 +1,11 @@
+ncmusic README
 
-ncmusic
+<!-- language: lang-none -->
+                                        _      
+         _ __   ___ _ __ ___  _   _ ___(_) ___ 
+        | '_ \ / __| '_ ` _ \| | | / __| |/ __|
+        | | | | (__| | | | | | |_| \__ \ | (__ 
+        |_| |_|\___|_| |_| |_|\__,_|___/_|\___|
 
 This is an ncurses client for music. Basically ncpsot, but I don't have Spotify premium and don't like Spotify.
 
