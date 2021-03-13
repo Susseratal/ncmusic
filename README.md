@@ -1,5 +1,4 @@
 ncmusic README
-
 <!-- language: lang-none -->
                                         _      
          _ __   ___ _ __ ___  _   _ ___(_) ___ 
@@ -14,12 +13,13 @@ With this in mind, I'm creating a similar interface except it's written in Pytho
 If none of this made sense, you now have documented evidence of my stupidity. If it did, I hope you enjoy!
 ~ Iain xx
 
-Changelog:
-
+Changelog:  
 Done:
 
         - [x] Path to directory, list files  
         - [x] List songs and albums accordingly  
+        - [x] Install mpv
+        - [x] Proper file vs dir control as seperate lists
 
 To do:
 
