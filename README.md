@@ -20,11 +20,15 @@ Done:
         - [x] List songs and albums accordingly  
         - [x] Install mpv
         - [x] Proper file vs dir control as seperate lists
+        - [x] Connect to mpv
+        - [x] Successfully play a song
+        - [x] Play albums
+        - [x] Play and pause
 
 To do:
 
-        - [ ] Connect to mpv
-        - [ ] Successfully play a song
+        - [ ] Make it ignore .DS_Store
+        - [ ] Skip songs in albums
         - [ ] Make a .ncmrc file so that one can configure the path
         - [ ] Package application
         - [ ] Shell script for exectution?
