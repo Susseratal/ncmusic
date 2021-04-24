@@ -37,8 +37,8 @@ def main_menu(song_list, album_list):
     show_help()
     while True:
         action = input("What do you want to do? ").lower()
-        if action in ["1", "songs", "list songs", "check songs"]:
-            list_songs(song_list)
+        if action in ["1", "songs", "list songs", "check songs"]: 
+            list_songs(song_list) 
 
         elif action in ["2", "check albums", "albums"]:
             list_albums(album_list)
@@ -67,6 +67,12 @@ def main_menu(song_list, album_list):
 
         elif action in ["pause", "please shut up", "p"]:
             Player.play_pause()
+
+        elif action in ["skip", "next", "]"]:
+            Player.skip_forward()
+
+        elif action in ["previous", "back", "["]:
+            Player.skip_back()
 
 path = pathlib.Path(sys.argv[0]).resolve()
 path = path.parent / ".." / "music"

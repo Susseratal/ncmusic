@@ -72,6 +72,8 @@ class MPVPlayer(PlayerInterface):
         self.default_args = default_args
         self.pause = MPVPlayer.encode_command(["set_property_string", "pause", "yes"])
         self.resume = MPVPlayer.encode_command(["set_property_string", "pause", "no"])
+        self.skip = MPVPlayer.encode_command(["playlist-next", "weak"])
+        self.prev = MPVPlayer.encode_command(["playlist-prev", "weak"])
         self.current_volume = 100
         self.sock = None
 
@@ -92,6 +94,12 @@ class MPVPlayer(PlayerInterface):
         logging.debug("MPVPlayer::play_pause")
         self.send_command(self.pause if (self.playing) else self.resume)
         self.playing = not self.playing
+
+    def skip_forward(self):
+        self.send_command(self.skip)
+
+    def skip_back(self):
+        self.send_command(self.prev)
 
     def send_command(self, command):
         if not self.child:
