@@ -70,6 +70,7 @@ class MPVPlayer(PlayerInterface):
         self.exe = exe
         self.name = "mpv"
         self.default_args = default_args
+        self.child = None
         self.pause = MPVPlayer.encode_command(["set_property_string", "pause", "yes"])
         self.resume = MPVPlayer.encode_command(["set_property_string", "pause", "no"])
         self.skip = MPVPlayer.encode_command(["playlist-next", "weak"])

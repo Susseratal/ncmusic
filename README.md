@@ -25,6 +25,8 @@ Done:
         - [x] Play albums
         - [x] Play and pause
         - [x] Skip songs in albums
+        - [x] create a basic interface program in curses (interface.py)
+        - [x] get control of buttons in curses
 
 To do:
 
