@@ -15,8 +15,16 @@ import sys
 import curses
 from players import MPVPlayer
 Player = MPVPlayer("/usr/local/bin/mpv", None)
-curses.use_default_colors()
-window.box()
+
+def main(window):
+    file_list = os.listdir(path)
+    file_list = [pathlib.Path(filename) for filename in file_list]
+    album_list = [path for path in file_list if path.is_dir()]
+    song_list = [path for path in file_list if path.is_file()]
+    curses.use_default_colors()
+    window.box()
+    window.refresh()
+    main_menu(song_list, album_list)
 
 def show_help():
     window.addstr("1. List songs")
@@ -36,14 +44,6 @@ def list_albums(album_list):
     print("Albums:")
     for (number, album) in enumerate(album_list, start=1):
         window.addstr(number, ". ", album)
-
-def main(window):
-    file_list = os.listdir(path)
-    file_list = [pathlib.Path(filename) for filename in file_list]
-    album_list = [path for path in file_list if path.is_dir()]
-    song_list = [path for path in file_list if path.is_file()]
-    main_menu(song_list, album_list)
-    curses.wrapper(main)
 
 def main_menu(song_list, album_list):
     show_help()
