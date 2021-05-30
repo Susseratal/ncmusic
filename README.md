@@ -27,11 +27,21 @@ Done:
         - [x] Skip songs in albums
         - [x] create a basic interface program in curses (interface.py)
         - [x] get control of buttons in curses
+        - [x] highlighting
+        - [x] List Albums
+        - [x] get curses working in main file
+        - [x] List songs
+        - [x] Make it ignore .DS_Store
 
 To do:
 
-        - [ ] Curses to make buttons funky
-        - [ ] Make it ignore .DS_Store
+        - [ ] Change dir structure to be artists > albums > songs
+        - [ ] Make window reflect that change
+        - [ ] scrolling
+        - [ ] don't crash when song names are long
+        - [ ] play songs
+        - [ ] music progress bar
+        - [ ] song control
         - [ ] Make a .ncmrc file so that one can configure the path
         - [ ] Package application
         - [ ] Shell script for exectution?

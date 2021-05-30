@@ -9,6 +9,14 @@ import time
 #curses.A_HORIZONTAL?
 #curses.curs_set(2) #make cursor visible (block style)
 
+#def list_songs(song_list):
+#    for (number, song) in enumerate(song_list, start=1): 
+#        window.addstr(number, ". ", song)
+
+#def list_albums(album_list):
+#    for (number, album) in enumerate(album_list, start=1):
+#        window.addstr(number, ". ", album)
+
 def interface(window):
     (height, width) = window.getmaxyx()
     AlbumWin = window.subwin(height,int(width/3),0,0)
