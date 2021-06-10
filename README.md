@@ -13,6 +13,10 @@ With this in mind, I'm creating a similar interface except it's written in Pytho
 If none of this made sense, you now have documented evidence of my stupidity. If it did, I hope you enjoy!
 ~ Iain xx
 
+Recommended Directory structure:  
+Artists > Albums > songs  
+This is what I've set the variable names to reflect, but if you want to restructure it, just be aware that some code edits may be necessary
+
 Changelog:  
 Done:
 
@@ -32,16 +36,17 @@ Done:
         - [x] get curses working in main file
         - [x] List songs
         - [x] Make it ignore .DS_Store
+        - [x] Change dir structure to be artists > albums > songs
+        - [x] Make window reflect that change
 
 To do:
 
-        - [ ] Change dir structure to be artists > albums > songs
-        - [ ] Make window reflect that change
         - [ ] scrolling
         - [ ] don't crash when song names are long
         - [ ] play songs
         - [ ] music progress bar
         - [ ] song control
+        - [ ] Make the dir structure easily configurable
         - [ ] Make a .ncmrc file so that one can configure the path
         - [ ] Package application
         - [ ] Shell script for exectution?
