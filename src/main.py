@@ -7,6 +7,8 @@
 #                                             #
 ###############################################
 
+# TODO currently: artists is albums, albums is songs and you can't see songs
+
 import glob
 import os
 import os.path
@@ -17,27 +19,27 @@ from players import MPVPlayer
 Player = MPVPlayer("/usr/local/bin/mpv", None)
 
 class CursorInfo:
-    def __init__(self, albumY=0, albumX=0, songY=0, songX=0, selected_album=None):
+    def __init__(self, artistY=0, artistX=0, albumY=0, albumX=0, selected_artist=None):
+        self.artistY = artistY
+        self.artistX = artistX
         self.albumY = albumY
         self.albumX = albumX
-        self.songY = songY
-        self.songX = songX
-        self.album = selected_album
+        self.artist = selected_artist
 
 def main(window):
     (height, width) = window.getmaxyx()
-    albumWinWidth = int(width / 2) #Allocate half window as albunwin
-    songWinWidth = width - (albumWinWidth - 1) #allocate remaining window width as songwin
-    albumWin = window.subwin(height - 10, albumWinWidth,0,0)
-    songWin = window.subwin(height - 10, songWinWidth,0, albumWinWidth-1)
+    artistWinWidth = int(width / 2) #Allocate half window as albumwin
+    albumWinWidth = width - (artistWinWidth - 1) #allocate remaining window width as songwin
+    artistWin = window.subwin(height - 10, artistWinWidth,0,0)
+    albumWin = window.subwin(height - 10, albumWinWidth,0, artistWinWidth-1)
+    artistWin.box()
     albumWin.box()
-    songWin.box()
     cursor = CursorInfo(1, 2, 0, 0)
     helptext = ["1. List songs", "2. List albums", "3. Check path", "4. Show help", "5. Quit", "6. Play song", "7. Play album"]
     file_list = os.listdir(path)
     file_list = [pathlib.Path(filename) for filename in file_list]
-    album_list = [path for path in file_list if path.is_dir()]
-    song_list = [path for path in file_list if path.is_file()]
+    artist_list = [path for path in file_list if path.is_dir()]
+    album_list = [path for path in file_list if path.is_file()]
     curses.noecho()
     curses.curs_set(0)
     window.keypad(1)
@@ -46,32 +48,32 @@ def main(window):
     window.refresh()
 
     def show_help():
-        window.addstr(1,2, helptext[0], curses.A_REVERSE if (cursor.albumY == 1) else 0)
-        window.addstr(2,2, helptext[1], curses.A_REVERSE if (cursor.albumY == 2) else 0)
-        window.addstr(3,2, helptext[2], curses.A_REVERSE if (cursor.albumY == 3) else 0)
-        window.addstr(4,2, helptext[3], curses.A_REVERSE if (cursor.albumY == 4) else 0)
-        window.addstr(5,2, helptext[4], curses.A_REVERSE if (cursor.albumY == 5) else 0)
-        window.addstr(6,2, helptext[5], curses.A_REVERSE if (cursor.albumY == 6) else 0)
-        window.addstr(7,2, helptext[6], curses.A_REVERSE if (cursor.albumY == 7) else 0)
+        window.addstr(1,2, helptext[0], curses.A_REVERSE if (cursor.artistY == 1) else 0)
+        window.addstr(2,2, helptext[1], curses.A_REVERSE if (cursor.artistY == 2) else 0)
+        window.addstr(3,2, helptext[2], curses.A_REVERSE if (cursor.artistY == 3) else 0)
+        window.addstr(4,2, helptext[3], curses.A_REVERSE if (cursor.artistY == 4) else 0)
+        window.addstr(5,2, helptext[4], curses.A_REVERSE if (cursor.artistY == 5) else 0)
+        window.addstr(6,2, helptext[5], curses.A_REVERSE if (cursor.artistY == 6) else 0)
+        window.addstr(7,2, helptext[6], curses.A_REVERSE if (cursor.artistY == 7) else 0)
 
-    def list_songs(selected_album):
-        for (number, song) in enumerate(sorted(selected_album.iterdir()), start=1): 
-            songWin.addstr(number, 2, str(song.name), curses.A_REVERSE if (cursor.songY == number) else 0)
-        songWin.refresh()
+    def list_artist(artist_list):
+        for (number, artist) in enumerate(artist_list, start=1):
+            artistWin.addstr(number, 2, str(artist), curses.A_REVERSE if (cursor.artistY == number) else 0)
+        artistWin.refresh()
 
-    def list_albums(album_list):
-        for (number, album) in enumerate(album_list, start=1):
-            albumWin.addstr(number, 2, str(album), curses.A_REVERSE if (cursor.albumY == number) else 0)
+    def list_album(selected_artist):
+        for (number, album) in enumerate(sorted(selected_artist.iterdir()), start=1): 
+            albumWin.addstr(number, 2, str(album.name), curses.A_REVERSE if (cursor.albumY == number) else 0)
         albumWin.refresh()
 
-    def main_menu(song_list, album_list):
+    def main_menu(artist_list, album_list):
         while True:
-            if cursor.album: #if cursor.album has a value, that means we're looking at the songs for that album so we need to list songs
-                list_songs(cursor.album) #List songs with the selected album as the value
-            else: #This is the condition that means cursor.album has no value so be in the albums list
-                list_albums(album_list)
+            if cursor.artist: #if cursor.album has a value, that means we're looking at the albums by the selected artist
+                list_album(cursor.artist) #List songs with the selected album as the value
+            else: #This is the condition that means neither cursor.artist or cursor.album has a value so be in the artists list
+                list_artist(artist_list)
 
-            window.move(cursor.albumY, cursor.albumX)
+            window.move(cursor.artistY, cursor.artistX)
             window.refresh()
             try:
                 key = window.getkey()
@@ -82,27 +84,33 @@ def main(window):
             if key == "q":
                 sys.exit(0)
 
-            elif key == "j":
-                if cursor.album:
-                    cursor.songY = min(len(list(cursor.album.iterdir())), cursor.songY + 1)
+            elif key == "h":
+                if cursor.artist:
+                    albumWin.clear()
+                    albumWin.box()
+                    cursor.artist = None
+                    albumWin.refresh()
                 else:
-                    cursor.albumY = min(len(album_list), cursor.albumY + 1)
+                    pass
+
+            elif key == "j":
+                if cursor.artist:
+                    cursor.albumY = min(len(list(cursor.artist.iterdir())), cursor.albumY + 1)
+                else:
+                    cursor.artistY = min(len(artist_list), cursor.artistY + 1) #need to fix so it knows what artist's albums it's looking at
 
             elif key == "k":
-                if cursor.album:
-                    cursor.songY = max(1, cursor.songY - 1)
-                else:
+                if cursor.artist:
                     cursor.albumY = max(1, cursor.albumY - 1)
+                else:
+                    cursor.artistY = max(1, cursor.artistY - 1)
 
             elif key == "l":
-                cursor.songY = (1)
-                cursor.album = album_list[cursor.albumY - 1] #Assign cursor.album as the currently selected itemm in the albums list
-
-            elif key == "h":
-                songWin.clear()
-                songWin.box()
-                cursor.album = None
-                songWin.refresh()
+                if cursor.artist:
+                    pass
+                else:
+                    cursor.albumY = (1)
+                    cursor.artist = artist_list[cursor.artistY - 1] #Assign cursor.album as the currently selected itemm in the albums list
 
             #   action = input("What do you want to do? ").lower()
             #   if action in ["1", "songs", "list songs", "check songs"]: 
@@ -142,7 +150,7 @@ def main(window):
             #   elif action in ["previous", "back", "["]:
             #       Player.skip_back()
 
-    main_menu(song_list, album_list)
+    main_menu(artist_list, album_list)
 
 path = pathlib.Path(sys.argv[0]).resolve()
 path = path.parent / ".." / "music"
