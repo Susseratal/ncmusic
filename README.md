@@ -43,6 +43,7 @@ Done:
 
 To do:
 
+        - [ ] add state to track list selection seperately from window 
         - [ ] scrolling
         - [ ] don't crash when song names are long
         - [ ] play songs

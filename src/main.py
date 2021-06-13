@@ -24,10 +24,9 @@ class ScreenState(Enum): #Assign numbers to variables that represent state
     SelectingSong = auto()
 
 class CursorInfo:
-    def __init__(self, leftY=0, rightY=0, songY=0, selected_artist=None, selected_album=None, songs=None, state=ScreenState.SelectingArtist):
+    def __init__(self, leftY=0, rightY=0, selected_artist=None, selected_album=None, songs=None, state=ScreenState.SelectingArtist):
         self.leftY = leftY
         self.rightY = rightY
-        self.songY = songY
         self.artist = selected_artist
         self.album = selected_album
         self.songs = songs
@@ -41,7 +40,7 @@ def main(window):
     rightWin = window.subwin(height - 10, rightWinWidth,0, leftWinWidth-1)
     leftWin.box()
     rightWin.box()
-    cursor = CursorInfo(1, 0, 0)
+    cursor = CursorInfo(1, 0)
     helptext = ["1. List songs", "2. List albums", "3. Check path", "4. Show help", "5. Quit", "6. Play song", "7. Play album"]
     file_list = os.listdir(path)
     file_list = [pathlib.Path(filename) for filename in file_list]
