@@ -38,6 +38,8 @@ Done:
         - [x] Make it ignore .DS_Store
         - [x] Change dir structure to be artists > albums > songs
         - [x] Make window reflect that change
+        - [x] Cycle through windows with "h" and "l" and list songs (sorted) 
+        - [x] Cycle through windows with "j" and "k"
 
 To do:
 
