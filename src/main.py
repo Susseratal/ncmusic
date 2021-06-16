@@ -190,6 +190,23 @@ def main(window):
                 else: 
                     assert False
 
+            elif key == "p":
+                if cursor.state == ScreenState.SelectingArtist or cursor.state == ScreenState.SelectingAlbumLeft:
+                    song = (path.parent / artist_list[cursor.leftY - 1])
+                    Player.play(song)
+                elif cursor.state == ScreenState.SelectingAlbumRight or cursor.state == ScreenState.SelectingSong:
+                    song = (path.parent / artist_list[cursor.rightY - 1])
+                    Player.play(song)
+
+            elif key == "[":
+                Player.skip_back()
+
+            elif key == "]":
+                Player.skip_forward()
+
+            else:
+                return
+
             #   action = input("What do you want to do? ").lower()
             #   if action in ["1", "songs", "list songs", "check songs"]: 
             #       list_songs(song_list) 
@@ -211,7 +228,6 @@ def main(window):
             #       list_songs(song_list)
             #       play = int(input("Which track do you want to listen to? "))-1
             #       song = song_list[play]
-            #       Player.play(song)
 
             #   elif action in ["7", "play album"]:
             #       list_albums(album_list)
@@ -227,7 +243,6 @@ def main(window):
 
             #   elif action in ["previous", "back", "["]:
             #       Player.skip_back()
-
     main_menu(artist_list)
 
 path = pathlib.Path(sys.argv[0]).resolve()
