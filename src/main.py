@@ -15,7 +15,7 @@ import sys
 import curses
 from enum import Enum, auto
 from players import MPVPlayer
-Player = MPVPlayer("/usr/local/bin/mpv", None)
+Player = MPVPlayer("/usr/bin/mpv", None)
 
 class ScreenState(Enum): #Assign numbers to variables that represent state
     SelectingArtist = auto()

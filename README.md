@@ -45,9 +45,11 @@ Done:
         - [x] Rename windows to be LeftWin and RightWin
         - [x] make it so that you can hear the music
         - [x] play songs
+        - [x] The path to MPV changes depending on system
 
 To do:
 
+        - [ ] Make path to MPV configurable like the path to the music
         - [ ] Make it so the music isn't so temperamental
         - [ ] add state to track list selection seperately from window 
         - [ ] scrolling
