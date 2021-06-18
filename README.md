@@ -42,17 +42,18 @@ Done:
         - [x] Cycle through windows with "j" and "k"
         - [x] /tmp contains test files and code snippets
         - [x] pressing "p" now spanws an MPV process, it just can't be heard
+        - [x] Rename windows to be LeftWin and RightWin
+        - [x] make it so that you can hear the music
+        - [x] play songs
 
 To do:
 
-        - [ ] make it so that you can hear the music
+        - [ ] Make it so the music isn't so temperamental
         - [ ] add state to track list selection seperately from window 
         - [ ] scrolling
         - [ ] don't crash when song names are long
-        - [ ] play songs
         - [ ] music progress bar
         - [ ] song control
         - [ ] Make the dir structure easily configurable
-        - [ ] Make a .ncmrc file so that one can configure the path
         - [ ] Package application
         - [ ] Shell script for exectution?

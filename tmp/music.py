@@ -76,6 +76,6 @@ def main_menu(song_list, album_list):
 
 
 path = pathlib.Path(sys.argv[0]).resolve()
-path = path.parent / ".." / "music"
+path = path.parent / ".." / "music" / "The Sisters of Mercy" / "First And Last And Always"
 os.chdir(path)
 main()

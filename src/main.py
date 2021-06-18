@@ -22,6 +22,7 @@ class ScreenState(Enum): #Assign numbers to variables that represent state
     SelectingAlbumRight = auto()
     SelectingAlbumLeft = auto()
     SelectingSong = auto()
+    Playing = auto()
 
 class CursorInfo:
     def __init__(self, leftY=0, rightY=0, selected_artist=None, selected_album=None, songs=None, state=ScreenState.SelectingArtist):
@@ -94,6 +95,8 @@ def main(window):
             elif cursor.state == ScreenState.SelectingSong:
                 list_album_left(artist_albums)
                 list_song(song_list)
+            elif cursor.state == ScreenState.Playing:
+                pass
             else:
                 assert False
 
@@ -110,7 +113,7 @@ def main(window):
 
             elif key == "h":
                 if cursor.state == ScreenState.SelectingArtist:
-                    pass
+                    curses.beep()
                 elif cursor.state == ScreenState.SelectingSong:
                     rightWin.clear()
                     rightWin.box()
@@ -149,7 +152,7 @@ def main(window):
 
             elif key == "k":
                 if cursor.state == ScreenState.SelectingArtist:
-                    cursor.leftY = max(1, cursor.leftY - 1)
+                   cursor.leftY = max(1, cursor.leftY - 1)
                 elif cursor.state == ScreenState.SelectingAlbumRight:
                     cursor.rightY = max(1, cursor.rightY - 1)
                 elif cursor.state == ScreenState.SelectingAlbumLeft:
@@ -161,7 +164,7 @@ def main(window):
 
             elif key == "l":
                 if cursor.state == ScreenState.SelectingSong: #looking at songs
-                    pass
+                    curses.beep()
                 elif cursor.state == ScreenState.SelectingAlbumRight: #looking at albums
                     leftWin.clear()
                     leftWin.box()
@@ -191,12 +194,23 @@ def main(window):
                     assert False
 
             elif key == "p":
-                if cursor.state == ScreenState.SelectingArtist or cursor.state == ScreenState.SelectingAlbumLeft:
-                    song = (path.parent / artist_list[cursor.leftY - 1])
-                    Player.play(song)
-                elif cursor.state == ScreenState.SelectingAlbumRight or cursor.state == ScreenState.SelectingSong:
-                    song = (path.parent / artist_list[cursor.rightY - 1])
-                    Player.play(song)
+                if cursor.state == ScreenState.Playing:
+                    Player.play_pause()
+                else:
+                    if cursor.state == ScreenState.SelectingSong:
+                        song = (path / song_list[cursor.leftY - 1])
+                        Player.play(song)
+                        cursor.state = ScreenState.Playing
+                    elif cursor.state == ScreenState.SelectingArtist or cursor.state == ScreenState.SelectingAlbumLeft:
+                        song = (path / artist_list[cursor.leftY - 1])
+                        rightWin.clear()
+                        rightWin.box()
+                        rightWin.addstr(1, 2, str(song))
+                        rightWin.refresh()
+                        #Player.play(song)
+                    elif cursor.state == ScreenState.SelectingAlbumRight or cursor.state == ScreenState.SelectingSong:
+                        song = (path.parent / artist_list[cursor.rightY - 1])
+                        Player.play(song)
 
             elif key == "[":
                 Player.skip_back()
@@ -205,24 +219,11 @@ def main(window):
                 Player.skip_forward()
 
             else:
-                return
-
-            #   action = input("What do you want to do? ").lower()
-            #   if action in ["1", "songs", "list songs", "check songs"]: 
-            #       list_songs(song_list) 
-
-            #   elif action in ["2", "check albums", "albums"]:
-            #       list_albums(album_list)
+                pass
 
             #   elif action in ["3", "check path", "path", "pwd"]:
             #       print("Current Working Directory")
             #       print(path)
-
-            #   elif action in ["4", "help", "show help", "h"]:
-            #       show_help()
-
-            #   elif action in ["5", "quit", "exit", "q"]:
-            #       sys.exit()
 
             #   elif action in ["6", "play song"]:
             #       list_songs(song_list)
@@ -237,12 +238,6 @@ def main(window):
 
             #   elif action in ["pause", "please shut up", "p"]:
             #       Player.play_pause()
-
-            #   elif action in ["skip", "next", "]"]:
-            #       Player.skip_forward()
-
-            #   elif action in ["previous", "back", "["]:
-            #       Player.skip_back()
     main_menu(artist_list)
 
 path = pathlib.Path(sys.argv[0]).resolve()
