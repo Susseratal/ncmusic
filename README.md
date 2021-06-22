@@ -46,16 +46,17 @@ Done:
         - [x] make it so that you can hear the music
         - [x] play songs
         - [x] The path to MPV changes depending on system
+        - [x] Make the dir structure easily configurable
+        - [x] Make path to MPV configurable like the path to the music
+        - [x] Added conf.py for configuration with comments
 
 To do:
 
-        - [ ] Make path to MPV configurable like the path to the music
         - [ ] Make it so the music isn't so temperamental
         - [ ] add state to track list selection seperately from window 
         - [ ] scrolling
         - [ ] don't crash when song names are long
         - [ ] music progress bar
         - [ ] song control
-        - [ ] Make the dir structure easily configurable
         - [ ] Package application
         - [ ] Shell script for exectution?

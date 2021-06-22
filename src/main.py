@@ -6,6 +6,7 @@
 #   |_| |_|\___|_| |_| |_|\__,_|___/_|\___|   #
 #                                             #
 ###############################################
+#/usr/bin/env python
 
 import glob
 import os
@@ -15,7 +16,9 @@ import sys
 import curses
 from enum import Enum, auto
 from players import MPVPlayer
-Player = MPVPlayer("/usr/bin/mpv", None)
+from conf import config
+Config = config()
+Player = MPVPlayer(Config.MPV_Path, None)
 
 class ScreenState(Enum): #Assign numbers to variables that represent state
     SelectingArtist = auto()
@@ -49,7 +52,7 @@ def main(window):
     curses.noecho()
     curses.curs_set(0)
     window.keypad(1)
-    curses.use_default_colors()
+    curses.use_default_colors() # Use the default terminal colours
     window.box()
     window.refresh()
 
@@ -240,7 +243,8 @@ def main(window):
             #       Player.play_pause()
     main_menu(artist_list)
 
-path = pathlib.Path(sys.argv[0]).resolve()
-path = path.parent / ".." / "music"
+#path = pathlib.Path(sys.argv[0]).resolve()
+#path = path.parent / ".." / "music"
+path = Config.Music_Path
 os.chdir(path)
 curses.wrapper(main)
