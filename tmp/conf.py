@@ -11,7 +11,6 @@ class config():
     MPV_Path = "/usr/bin/mpv" # Linux path
     # MPV_Path = "/usr/local/bin/mpv" # MacOS path
     # Uncomment as necessary for your computer or correct based on where you've installed it
-    Music_Path = "/home/iain/Programming/ncmusic/music"
-    #~/Programming/ncmusic/music
+    Music_Path = "/home/username/path/to/music"
     # Use an absolute path to your music directory. It should then be formatted:
     # music > artists > albums > songs
