@@ -25,7 +25,6 @@ class ScreenState(Enum): #Assign numbers to variables that represent state
     SelectingAlbumRight = auto()
     SelectingAlbumLeft = auto()
     SelectingSong = auto()
-    Playing = auto()
 
 class CursorInfo:
     def __init__(self, leftY=0, rightY=0, selected_artist=None, selected_album=None, songs=None, state=ScreenState.SelectingArtist):
@@ -98,8 +97,6 @@ def main(window):
             elif cursor.state == ScreenState.SelectingSong:
                 list_album_left(artist_albums)
                 list_song(song_list)
-            elif cursor.state == ScreenState.Playing:
-                pass
             else:
                 assert False
 
@@ -196,24 +193,53 @@ def main(window):
                 else: 
                     assert False
 
-            elif key == "p":
-                if cursor.state == ScreenState.Playing:
-                    Player.play_pause()
+            elif key == " ":
+                if cursor.state == ScreenState.SelectingArtist:
+                    song = (path / song_list[cursor.leftY - 1])
+                    Player.play(song)
+                    playing = True
+                elif cursor.state == ScreenState.SelectingAlbumLeft:
+                    song = (path / song_list[cursor.leftY - 1])
+                    Player.play(song)
+                    playing = True
+                elif cursor.state == ScreenState.SelectingAlbumRight:
+                    song = (path / song_list[cursor.rightY - 1])
+                    Player.play(song)
+                    playing = True
+                elif cursor.state == ScreenState.SelectingSong:
+                    song = (path / song_list[cursor.rightY - 1])
+                    Player.play(song)
+                    playing = True
                 else:
-                    if cursor.state == ScreenState.SelectingSong:
-                        song = (path / song_list[cursor.leftY - 1])
-                        Player.play(song)
-                        cursor.state = ScreenState.Playing
-                    elif cursor.state == ScreenState.SelectingArtist or cursor.state == ScreenState.SelectingAlbumLeft:
-                        song = (path / artist_list[cursor.leftY - 1])
-                        rightWin.clear()
-                        rightWin.box()
-                        rightWin.addstr(1, 2, str(song))
-                        rightWin.refresh()
-                        #Player.play(song)
-                    elif cursor.state == ScreenState.SelectingAlbumRight or cursor.state == ScreenState.SelectingSong:
-                        song = (path.parent / artist_list[cursor.rightY - 1])
-                        Player.play(song)
+                    assert False
+
+            elif key == "p":
+                if playing == False:
+                    Player.play_pause()
+                    playing = True
+                elif playing == True:
+                    Player.play_pause()
+                    playing = False
+                else:
+                    assert False
+
+#               if cursor.state == ScreenState.Playing:
+#                   Player.play_pause()
+#               else:
+#                   if cursor.state == ScreenState.SelectingSong:
+#                       song = (path / song_list[cursor.leftY - 1])
+#                       Player.play(song)
+#                       cursor.state = ScreenState.Playing
+#                   elif cursor.state == ScreenState.SelectingArtist or cursor.state == ScreenState.SelectingAlbumLeft:
+#                       song = (path / artist_list[cursor.leftY - 1])
+#                       rightWin.clear()
+#                       rightWin.box()
+#                       rightWin.addstr(1, 2, str(song))
+#                       rightWin.refresh()
+#                       #Player.play(song)
+#                   elif cursor.state == ScreenState.SelectingAlbumRight or cursor.state == ScreenState.SelectingSong:
+#                       song = (path.parent / artist_list[cursor.rightY - 1])
+#                       Player.play(song)
 
             elif key == "[":
                 Player.skip_back()
@@ -247,4 +273,5 @@ def main(window):
 #path = path.parent / ".." / "music"
 path = Config.Music_Path
 os.chdir(path)
+playing = False
 curses.wrapper(main)

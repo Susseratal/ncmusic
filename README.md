@@ -49,9 +49,11 @@ Done:
         - [x] Make the dir structure easily configurable
         - [x] Make path to MPV configurable like the path to the music
         - [x] Added conf.py for configuration with comments
+        - [x] Added play/pause feature
 
 To do:
 
+        - [ ] Make play/pause feature less buggy
         - [ ] Make it so the music isn't so temperamental
         - [ ] add state to track list selection seperately from window 
         - [ ] scrolling
