@@ -54,7 +54,6 @@ def main(window):
     curses.use_default_colors() # Use the default terminal colours
     window.box()
     window.refresh()
-
     #TODO Could reformat the functions to be more dynamic seeing as they need to have 3 lists and a dynamic interface
 
     def list_artist(artist_list):
@@ -78,6 +77,7 @@ def main(window):
         rightWin.refresh()
 
     def main_menu(artist_list):
+        playing = None
         while True:
             if cursor.state == ScreenState.SelectingArtist:
                 list_artist(artist_list)
@@ -136,7 +136,6 @@ def main(window):
                     cursor.rightY = min(len(artist_albums), cursor.rightY + 1)
                 elif cursor.state == ScreenState.SelectingAlbumLeft:
                     cursor.leftY = min(len(artist_albums), cursor.leftY + 1)
-                elif cursor.state == ScreenState.SelectingSong:
                     cursor.rightY = min(len(song_list), cursor.rightY + 1)
                 else:
                     assert False
@@ -205,7 +204,7 @@ def main(window):
                     Player.play(song)
                     playing = True
                 else:
-                    assert False
+                    pass
 
             elif key == "p":
                 if playing == False:
@@ -215,7 +214,7 @@ def main(window):
                     Player.play_pause()
                     playing = False
                 else:
-                    assert False
+                    pass
 
             elif key == "[":
                 Player.skip_back()
@@ -232,5 +231,4 @@ def main(window):
 #path = path.parent / ".." / "music"
 path = Config.Music_Path
 os.chdir(path)
-playing = False
 curses.wrapper(main)

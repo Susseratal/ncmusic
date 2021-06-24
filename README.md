@@ -6,59 +6,28 @@ ncmusic README
         | | | | (__| | | | | | |_| \__ \ | (__ 
         |_| |_|\___|_| |_| |_|\__,_|___/_|\___|
 
-This is an ncurses client for music. Basically ncpsot, but I don't have Spotify premium and don't like Spotify.
+This is an ncurses based nusic client written in python. I am considering rewriting this in C or C# or something like that, just for the learning experience. There are a few things you should know going into this:  
+The program comes with a default config file, if you just do 
 
-With this in mind, I'm creating a similar interface except it's written in Python. I want it to be able to "play through the terminal" as it were, spawning a background process to play the music, but not having to launch another application. That way I can validate the existence of my program instead of just creating a roundabout and inefficient method of launching an existing program. I'd also like to package it as an actual application type thing, so it can be installed and it automatically creates a music directory. Either you can point it at a different directory or put all your music in the directory it created.  
+        cp config.def.py config.py
 
-The default config file should be enough to get you going. just cp it into a "conf.py" and edit it as necessary and all should work fine. (once you've changed all paths of course.)
+you can then delete config.def.py once you've given config.py your path to your music directory and installation of MPV. While relative paths should work fine, absolute paths are probably more sensible.  
+The Music_Path in the config file should go to the top most "music" directory, which should then look like:  
+Music/Artists/Albums/Songs  
+This is what I've set the variable names to reflect, but if you want to restructure it, just be aware that some code edits may be necessary.  
 
-If none of this made sense, you now have documented evidence of my stupidity. If it did, I hope you enjoy!
-~ Iain xx
+The controls are vim based (or at least vim inspired), I'll probably make them configurable at some point, but they're not just yet. They are as follows:  
 
-Recommended Directory structure:  
-Artists > Albums > songs  
-This is what I've set the variable names to reflect, but if you want to restructure it, just be aware that some code edits may be necessary
+        K == Up
+        J == Down
+        H == Left
+        L == Right
+        Space bar == Play selected song
+        P == play/pause
+        [ == skip back a track
+        ] == skip forward a track
 
-Changelog:  
-Done:
+note: Skipping forward and back only works when you've selected an entire artist or album to play. pressing play on track 2 of an album, for instance, just plays track 2, rather than the entire album starting from track 2  
+As I say, player is unfinished, but in the most baseline usable state
 
-        - [x] Path to directory, list files  
-        - [x] List songs and albums accordingly  
-        - [x] Install mpv
-        - [x] Proper file vs dir control as seperate lists
-        - [x] Connect to mpv
-        - [x] Successfully play a song
-        - [x] Play albums
-        - [x] Play and pause
-        - [x] Skip songs in albums
-        - [x] create a basic interface program in curses (interface.py)
-        - [x] get control of buttons in curses
-        - [x] highlighting
-        - [x] List Albums
-        - [x] get curses working in main file
-        - [x] List songs
-        - [x] Make it ignore .DS_Store
-        - [x] Change dir structure to be artists > albums > songs
-        - [x] Make window reflect that change
-        - [x] Cycle through windows with "h" and "l" and list songs (sorted) 
-        - [x] Cycle through windows with "j" and "k"
-        - [x] /tmp contains test files and code snippets
-        - [x] pressing "p" now spanws an MPV process, it just can't be heard
-        - [x] Rename windows to be LeftWin and RightWin
-        - [x] make it so that you can hear the music
-        - [x] play songs
-        - [x] The path to MPV changes depending on system
-        - [x] Make the dir structure easily configurable
-        - [x] Make path to MPV configurable like the path to the music
-        - [x] Added conf.py for configuration with comments
-        - [x] Added play/pause feature
-        - [x] Make play/pause feature less buggy? (Testing required)
-        - [x] song control
-
-To do:
-
-        - [ ] scrolling
-        - [ ] don't crash when song names are long
-        - [ ] music progress bar
-        - [ ] Package application
-        - [ ] Shell script for exectution?
+Second Note: If you scale up the terminal or change the font size, the program gets upset. if the text goes of the screen, it crashes. scrolling isn't a feature yet. it's on the todo list
