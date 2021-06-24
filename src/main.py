@@ -8,12 +8,13 @@
 ###############################################
 #/usr/bin/env python
 
+import curses
 import glob
 import os
 import os.path
 import pathlib
 import sys
-import curses
+import time
 from enum import Enum, auto
 from players import MPVPlayer
 from conf import config
@@ -44,10 +45,9 @@ def main(window):
     leftWin.box()
     rightWin.box()
     cursor = CursorInfo(1, 0)
-    helptext = ["1. List songs", "2. List albums", "3. Check path", "4. Show help", "5. Quit", "6. Play song", "7. Play album"]
     file_list = os.listdir(path)
     file_list = [pathlib.Path(filename) for filename in file_list]
-    artist_list = [path for path in file_list if path.is_dir()]
+    artist_list = sorted([path for path in file_list if path.is_dir()])
     curses.noecho()
     curses.curs_set(0)
     window.keypad(1)
@@ -55,16 +55,7 @@ def main(window):
     window.box()
     window.refresh()
 
-    def show_help():
-        window.addstr(1,2, helptext[0], curses.A_REVERSE if (cursor.leftY == 1) else 0)
-        window.addstr(2,2, helptext[1], curses.A_REVERSE if (cursor.leftY == 2) else 0)
-        window.addstr(3,2, helptext[2], curses.A_REVERSE if (cursor.leftY == 3) else 0)
-        window.addstr(4,2, helptext[3], curses.A_REVERSE if (cursor.leftY == 4) else 0)
-        window.addstr(5,2, helptext[4], curses.A_REVERSE if (cursor.leftY == 5) else 0)
-        window.addstr(6,2, helptext[5], curses.A_REVERSE if (cursor.leftY == 6) else 0)
-        window.addstr(7,2, helptext[6], curses.A_REVERSE if (cursor.leftY == 7) else 0)
-
-        #TODO Could reformat the functions to be more dynamic seeing as they need to have 3 lists and a dynamic interface
+    #TODO Could reformat the functions to be more dynamic seeing as they need to have 3 lists and a dynamic interface
 
     def list_artist(artist_list):
         for (number, artist) in enumerate(artist_list, start=1):
@@ -194,16 +185,19 @@ def main(window):
                     assert False
 
             elif key == " ":
+                song = None
+                Player.stop()
+                time.sleep(0.1) # Give the previous process time to die, should it need it. just a bandaid fix on two processes running for now. will do something proper later
                 if cursor.state == ScreenState.SelectingArtist:
-                    song = (path / song_list[cursor.leftY - 1])
+                    song = (path / artist_list[cursor.leftY - 1])
                     Player.play(song)
                     playing = True
                 elif cursor.state == ScreenState.SelectingAlbumLeft:
-                    song = (path / song_list[cursor.leftY - 1])
+                    song = (path / artist_albums[cursor.leftY - 1])
                     Player.play(song)
                     playing = True
                 elif cursor.state == ScreenState.SelectingAlbumRight:
-                    song = (path / song_list[cursor.rightY - 1])
+                    song = (path / artist_albums[cursor.rightY - 1])
                     Player.play(song)
                     playing = True
                 elif cursor.state == ScreenState.SelectingSong:
@@ -223,24 +217,6 @@ def main(window):
                 else:
                     assert False
 
-#               if cursor.state == ScreenState.Playing:
-#                   Player.play_pause()
-#               else:
-#                   if cursor.state == ScreenState.SelectingSong:
-#                       song = (path / song_list[cursor.leftY - 1])
-#                       Player.play(song)
-#                       cursor.state = ScreenState.Playing
-#                   elif cursor.state == ScreenState.SelectingArtist or cursor.state == ScreenState.SelectingAlbumLeft:
-#                       song = (path / artist_list[cursor.leftY - 1])
-#                       rightWin.clear()
-#                       rightWin.box()
-#                       rightWin.addstr(1, 2, str(song))
-#                       rightWin.refresh()
-#                       #Player.play(song)
-#                   elif cursor.state == ScreenState.SelectingAlbumRight or cursor.state == ScreenState.SelectingSong:
-#                       song = (path.parent / artist_list[cursor.rightY - 1])
-#                       Player.play(song)
-
             elif key == "[":
                 Player.skip_back()
 
@@ -250,23 +226,6 @@ def main(window):
             else:
                 pass
 
-            #   elif action in ["3", "check path", "path", "pwd"]:
-            #       print("Current Working Directory")
-            #       print(path)
-
-            #   elif action in ["6", "play song"]:
-            #       list_songs(song_list)
-            #       play = int(input("Which track do you want to listen to? "))-1
-            #       song = song_list[play]
-
-            #   elif action in ["7", "play album"]:
-            #       list_albums(album_list)
-            #       play = int(input("Which album do you want to listen to? "))-1
-            #       album = album_list[play]
-            #       Player.play(album)
-
-            #   elif action in ["pause", "please shut up", "p"]:
-            #       Player.play_pause()
     main_menu(artist_list)
 
 #path = pathlib.Path(sys.argv[0]).resolve()

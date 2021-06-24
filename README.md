@@ -52,15 +52,13 @@ Done:
         - [x] Make path to MPV configurable like the path to the music
         - [x] Added conf.py for configuration with comments
         - [x] Added play/pause feature
+        - [x] Make play/pause feature less buggy? (Testing required)
+        - [x] song control
 
 To do:
 
-        - [ ] Make play/pause feature less buggy
-        - [ ] Make it so the music isn't so temperamental
-        - [ ] add state to track list selection seperately from window 
         - [ ] scrolling
         - [ ] don't crash when song names are long
         - [ ] music progress bar
-        - [ ] song control
         - [ ] Package application
         - [ ] Shell script for exectution?
