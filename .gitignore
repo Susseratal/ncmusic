@@ -3,4 +3,5 @@
 **/*.pyc
 **/savedata*
 **/*.swp
+**/src/conf.py
 **/music
