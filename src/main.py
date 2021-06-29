@@ -77,6 +77,8 @@ def main(window):
         rightWin.refresh()
 
     def main_menu(artist_list):
+        (height, width) = window.getmaxyx()
+        width = int(width / 2)
         playing = None
         while True:
             if cursor.state == ScreenState.SelectingArtist:
@@ -90,6 +92,13 @@ def main(window):
                 list_song(song_list)
             else:
                 assert False
+
+    #       if playing == True:
+    #           window.addstr(width, 20, "Playing")
+    #       elif playing == False:
+    #           print ("Paused")
+    #       else:
+    #           pass
 
             window.move(cursor.leftY, 2)
             window.refresh()
