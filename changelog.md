@@ -41,3 +41,4 @@ To do:
         - [ ] music progress bar
         - [ ] Package application
         - [ ] Shell script for exectution?
+        - [ ] rearrange the windows so it's a 3 window layout (testing using dupe.py)
