@@ -146,6 +146,8 @@ def main(window):
                 elif cursor.state == ScreenState.SelectingAlbumLeft:
                     cursor.leftY = min(len(artist_albums), cursor.leftY + 1)
                     cursor.rightY = min(len(song_list), cursor.rightY + 1)
+                elif cursor.state == ScreenState.SelectingSong:
+                    cursor.rightY = min(len(song_list), cursor.rightY + 1)
                 else:
                     assert False
 
