@@ -8,6 +8,7 @@
 ###############################################
 #/usr/bin/env python
 # try and make it a 3 window layout
+# new and broken
 
 import curses
 import glob
@@ -39,12 +40,14 @@ class CursorInfo:
 
 def main(window):
     (height, width) = window.getmaxyx()
-    leftWinWidth = int(width / 2) #Allocate half window as albumwin
+    leftWinWidth = int(width / 3) #Allocate half window as albumwin
     midWinWidth = width - (leftWinWidth - 1) #allocate remaining window width as songwin
     rightWinWidth = width - (leftWinWidth - 1) #allocate remaining window width as songwin
-    leftWin = window.subwin(height - 10, leftWinWidth,0,0)
-    rightWin = window.subwin(height - 10, rightWinWidth,0, leftWinWidth-1)
+    leftWin = window.subwin(height - 10, leftWinWidth, 0, 0)
+    midWin = window.subwin(height - 10, midWinWidth, 0, leftWinWidth - 1)
+    rightWin = window.subwin(height - 10, rightWinWidth, 0, midWinWidth - 1)
     leftWin.box()
+    midWin.box()
     rightWin.box()
     cursor = CursorInfo(1, 0)
     file_list = os.listdir(path)
@@ -82,159 +85,165 @@ def main(window):
         (height, width) = window.getmaxyx()
         width = int(width / 2)
         playing = None
-        while True:
-            if cursor.state == ScreenState.SelectingArtist:
-                list_artist(artist_list)
-            elif cursor.state == ScreenState.SelectingAlbumRight:
-                list_album_right(artist_albums) #List songs with the selected album as the value
-            elif cursor.state == ScreenState.SelectingAlbumLeft:
-                list_album_left(artist_albums)
-            elif cursor.state == ScreenState.SelectingSong:
-                list_album_left(artist_albums)
-                list_song(song_list)
-            else:
-                assert False
+        while True: 
+            leftWin.addstr(1, 2, "left window")
+            midWin.addstr(1, 2, "Middle window")
+            rightWin.addstr(1, 2, "Right window")
+            leftWin.refresh()
+            midWin.refresh()
+            rightWin.refresh()
+#           if cursor.state == ScreenState.SelectingArtist:
+#               list_artist(artist_list)
+#           elif cursor.state == ScreenState.SelectingAlbumRight:
+#               list_album_right(artist_albums) #List songs with the selected album as the value
+#           elif cursor.state == ScreenState.SelectingAlbumLeft:
+#               list_album_left(artist_albums)
+#           elif cursor.state == ScreenState.SelectingSong:
+#               list_album_left(artist_albums)
+#               list_song(song_list)
+#           else:
+#               assert False
 
-    #       if playing == True:
-    #           window.addstr(width, 20, "Playing")
-    #       elif playing == False:
-    #           print ("Paused")
-    #       else:
-    #           pass
+#           if playing == True:
+#               window.addstr(width, 20, "Playing")
+#           elif playing == False:
+#               print ("Paused")
+#           else:
+#               pass
 
-            window.move(cursor.leftY, 2)
-            window.refresh()
-            try:
-                key = window.getkey()
-            except curses.error:
-                # TODO: Could be that the font size has changed. Need to fix layout.
-                key = None
+#           window.move(cursor.leftY, 2)
+#           window.refresh()
+#           try:
+#               key = window.getkey()
+#           except curses.error:
+#               # TODO: Could be that the font size has changed. Need to fix layout.
+#               key = None
 
-            if key == "q":
-                sys.exit(0)
+#           if key == "q":
+#               sys.exit(0)
 
-            elif key == "h":
-                if cursor.state == ScreenState.SelectingArtist:
-                    curses.beep()
-                elif cursor.state == ScreenState.SelectingSong:
-                    rightWin.clear()
-                    rightWin.box()
-                    cursor.album = None
-                    rightWin.refresh()
-                    cursor.state = ScreenState.SelectingAlbumLeft
-                elif cursor.state == ScreenState.SelectingAlbumLeft:
-                    leftWin.clear()
-                    rightWin.clear()
-                    rightWin.box()
-                    leftWin.box()
-                    cursor.artist = None
-                    cursor.state = ScreenState.SelectingArtist
-                    rightWin.refresh()
-                    leftWin.refresh()
-                elif cursor.state == ScreenState.SelectingAlbumRight:
-                    rightWin.clear()
-                    rightWin.box()
-                    rightWin.refresh()
-                    cursor.artist = None
-                    cursor.state = ScreenState.SelectingArtist
-                else:
-                    assert False # Highlight if an unrecognised state has occurred
+#           elif key == "h":
+#               if cursor.state == ScreenState.SelectingArtist:
+#                   curses.beep()
+#               elif cursor.state == ScreenState.SelectingSong:
+#                   rightWin.clear()
+#                   rightWin.box()
+#                   cursor.album = None
+#                   rightWin.refresh()
+#                   cursor.state = ScreenState.SelectingAlbumLeft
+#               elif cursor.state == ScreenState.SelectingAlbumLeft:
+#                   leftWin.clear()
+#                   rightWin.clear()
+#                   rightWin.box()
+#                   leftWin.box()
+#                   cursor.artist = None
+#                   cursor.state = ScreenState.SelectingArtist
+#                   rightWin.refresh()
+#                   leftWin.refresh()
+#               elif cursor.state == ScreenState.SelectingAlbumRight:
+#                   rightWin.clear()
+#                   rightWin.box()
+#                   rightWin.refresh()
+#                   cursor.artist = None
+#                   cursor.state = ScreenState.SelectingArtist
+#               else:
+#                   assert False # Highlight if an unrecognised state has occurred
 
-            elif key == "j":
-                if cursor.state == ScreenState.SelectingArtist:
-                    cursor.leftY = min(len(artist_list), cursor.leftY + 1)
-                elif cursor.state == ScreenState.SelectingAlbumRight:
-                    cursor.rightY = min(len(artist_albums), cursor.rightY + 1)
-                elif cursor.state == ScreenState.SelectingAlbumLeft:
-                    cursor.leftY = min(len(artist_albums), cursor.leftY + 1)
-                    cursor.rightY = min(len(song_list), cursor.rightY + 1)
-                else:
-                    assert False
+#           elif key == "j":
+#               if cursor.state == ScreenState.SelectingArtist:
+#                   cursor.leftY = min(len(artist_list), cursor.leftY + 1)
+#               elif cursor.state == ScreenState.SelectingAlbumRight:
+#                   cursor.rightY = min(len(artist_albums), cursor.rightY + 1)
+#               elif cursor.state == ScreenState.SelectingAlbumLeft:
+#                   cursor.leftY = min(len(artist_albums), cursor.leftY + 1)
+#                   cursor.rightY = min(len(song_list), cursor.rightY + 1)
+#               else:
+#                   assert False
 
-            elif key == "k":
-                if cursor.state == ScreenState.SelectingArtist:
-                   cursor.leftY = max(1, cursor.leftY - 1)
-                elif cursor.state == ScreenState.SelectingAlbumRight:
-                    cursor.rightY = max(1, cursor.rightY - 1)
-                elif cursor.state == ScreenState.SelectingAlbumLeft:
-                    cursor.leftY = max(1, cursor.leftY - 1)
-                elif cursor.state == ScreenState.SelectingSong:
-                    cursor.rightY = max(1, cursor.rightY - 1)
-                else:
-                    assert False
+#           elif key == "k":
+#               if cursor.state == ScreenState.SelectingArtist:
+#                  cursor.leftY = max(1, cursor.leftY - 1)
+#               elif cursor.state == ScreenState.SelectingAlbumRight:
+#                   cursor.rightY = max(1, cursor.rightY - 1)
+#               elif cursor.state == ScreenState.SelectingAlbumLeft:
+#                   cursor.leftY = max(1, cursor.leftY - 1)
+#               elif cursor.state == ScreenState.SelectingSong:
+#                   cursor.rightY = max(1, cursor.rightY - 1)
+#               else:
+#                   assert False
 
-            elif key == "l":
-                if cursor.state == ScreenState.SelectingSong: #looking at songs
-                    curses.beep()
-                elif cursor.state == ScreenState.SelectingAlbumRight: #looking at albums
-                    leftWin.clear()
-                    leftWin.box()
-                    leftWin.refresh()
-                    rightWin.clear()
-                    rightWin.box()
-                    rightWin.refresh()
-                    cursor.album = artist_albums[cursor.rightY - 1]
-                    song_list = list(sorted(cursor.album.iterdir()))
-                    cursor.state = ScreenState.SelectingSong
-                    cursor.leftY = cursor.rightY
-                    cursor.rightY = (1)
-                elif cursor.state == ScreenState.SelectingAlbumLeft:
-                    rightWin.clear()
-                    rightWin.box()
-                    rightWin.refresh()
-                    cursor.album = artist_albums[cursor.leftY - 1]
-                    song_list = list(sorted(cursor.album.iterdir()))
-                    cursor.state = ScreenState.SelectingSong
-                    cursor.rightY = (1)
-                elif cursor.state == ScreenState.SelectingArtist:
-                    cursor.rightY = (1)
-                    cursor.artist = artist_list[cursor.leftY - 1] #Assign cursor.album as the currently selected item in the albums list
-                    artist_albums = list(sorted(cursor.artist.iterdir()))
-                    cursor.state = ScreenState.SelectingAlbumRight
-                else: 
-                    assert False
+#           elif key == "l":
+#               if cursor.state == ScreenState.SelectingSong: #looking at songs
+#                   curses.beep()
+#               elif cursor.state == ScreenState.SelectingAlbumRight: #looking at albums
+#                   leftWin.clear()
+#                   leftWin.box()
+#                   leftWin.refresh()
+#                   rightWin.clear()
+#                   rightWin.box()
+#                   rightWin.refresh()
+#                   cursor.album = artist_albums[cursor.rightY - 1]
+#                   song_list = list(sorted(cursor.album.iterdir()))
+#                   cursor.state = ScreenState.SelectingSong
+#                   cursor.leftY = cursor.rightY
+#                   cursor.rightY = (1)
+#               elif cursor.state == ScreenState.SelectingAlbumLeft:
+#                   rightWin.clear()
+#                   rightWin.box()
+#                   rightWin.refresh()
+#                   cursor.album = artist_albums[cursor.leftY - 1]
+#                   song_list = list(sorted(cursor.album.iterdir()))
+#                   cursor.state = ScreenState.SelectingSong
+#                   cursor.rightY = (1)
+#               elif cursor.state == ScreenState.SelectingArtist:
+#                   cursor.rightY = (1)
+#                   cursor.artist = artist_list[cursor.leftY - 1] #Assign cursor.album as the currently selected item in the albums list
+#                   artist_albums = list(sorted(cursor.artist.iterdir()))
+#                   cursor.state = ScreenState.SelectingAlbumRight
+#               else: 
+#                   assert False
 
-            elif key == " ":
-                song = None
-                Player.stop()
-                time.sleep(0.1) # Give the previous process time to die, should it need it. just a bandaid fix on two processes running for now. will do something proper later
-                if cursor.state == ScreenState.SelectingArtist:
-                    song = (path / artist_list[cursor.leftY - 1])
-                    Player.play(song)
-                    playing = True
-                elif cursor.state == ScreenState.SelectingAlbumLeft:
-                    song = (path / artist_albums[cursor.leftY - 1])
-                    Player.play(song)
-                    playing = True
-                elif cursor.state == ScreenState.SelectingAlbumRight:
-                    song = (path / artist_albums[cursor.rightY - 1])
-                    Player.play(song)
-                    playing = True
-                elif cursor.state == ScreenState.SelectingSong:
-                    song = (path / song_list[cursor.rightY - 1])
-                    Player.play(song)
-                    playing = True
-                else:
-                    pass
+#           elif key == " ":
+#               song = None
+#               Player.stop()
+#               time.sleep(0.1) # Give the previous process time to die, should it need it. just a bandaid fix on two processes running for now. will do something proper later
+#               if cursor.state == ScreenState.SelectingArtist:
+#                   song = (path / artist_list[cursor.leftY - 1])
+#                   Player.play(song)
+#                   playing = True
+#               elif cursor.state == ScreenState.SelectingAlbumLeft:
+#                   song = (path / artist_albums[cursor.leftY - 1])
+#                   Player.play(song)
+#                   playing = True
+#               elif cursor.state == ScreenState.SelectingAlbumRight:
+#                   song = (path / artist_albums[cursor.rightY - 1])
+#                   Player.play(song)
+#                   playing = True
+#               elif cursor.state == ScreenState.SelectingSong:
+#                   song = (path / song_list[cursor.rightY - 1])
+#                   Player.play(song)
+#                   playing = True
+#               else:
+#                   pass
 
-            elif key == "p":
-                if playing == False:
-                    Player.play_pause()
-                    playing = True
-                elif playing == True:
-                    Player.play_pause()
-                    playing = False
-                else:
-                    pass
+#           elif key == "p":
+#               if playing == False:
+#                   Player.play_pause()
+#                   playing = True
+#               elif playing == True:
+#                   Player.play_pause()
+#                   playing = False
+#               else:
+#                   pass
 
-            elif key == "[":
-                Player.skip_back()
+#           elif key == "[":
+#               Player.skip_back()
 
-            elif key == "]":
-                Player.skip_forward()
+#           elif key == "]":
+#               Player.skip_forward()
 
-            else:
-                pass
+#           else:
+#               pass
 
     main_menu(artist_list)
 

@@ -7,6 +7,7 @@
 #                                             #
 ###############################################
 #/usr/bin/env python
+# current and functional
 
 import curses
 import glob
@@ -40,8 +41,8 @@ def main(window):
     (height, width) = window.getmaxyx()
     leftWinWidth = int(width / 2) #Allocate half window as albumwin
     rightWinWidth = width - (leftWinWidth - 1) #allocate remaining window width as songwin
-    leftWin = window.subwin(height - 10, leftWinWidth,0,0)
-    rightWin = window.subwin(height - 10, rightWinWidth,0, leftWinWidth-1)
+    leftWin = window.subwin(height - 10, leftWinWidth, 0, 0)
+    rightWin = window.subwin(height - 10, rightWinWidth, 0, leftWinWidth-1)
     leftWin.box()
     rightWin.box()
     cursor = CursorInfo(1, 0)
