@@ -90,7 +90,7 @@ def main(window):
 
     def list_song(song_list): #List albums in the artist window (left) and songs in the album window (right)
        for (number, song) in enumerate(song_list, start=1):
-           rightWin.addstr(number, 2, str(song.name.strip(".mp3")), curses.A_REVERSE if (cursor.rightY == number) else 0)
+           rightWin.addstr(number, 2, str(song.name.removesuffix(".mp3")), curses.A_REVERSE if (cursor.rightY == number) else 0)
        rightWin.refresh()
 
     def main_menu(artist_list):
