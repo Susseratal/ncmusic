@@ -102,6 +102,9 @@ class MPVPlayer(PlayerInterface):
     def skip_back(self):
         self.send_command(self.prev)
 
+    def stop(self):
+        self.send_command(self.stop)
+
     def send_command(self, command):
         if not self.child:
             return

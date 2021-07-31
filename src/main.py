@@ -29,7 +29,7 @@ class ScreenState(Enum): #Assign numbers to variables that represent state
     SelectingSong = auto()
 
 class CursorInfo:
-    def __init__(self, leftY=0, midY=0, rightY=0, selected_artist=None, selected_album=None, songs=None, state=ScreenState.SelectingArtist):
+    def __init__(self, leftY=0, midY=0, rightY=0, selected_artist=None, selected_album=None, songs=None, state=ScreenState.SelectingArtist, playing=None):
         self.leftY = leftY
         self.midY = midY
         self.rightY = rightY
@@ -37,32 +37,46 @@ class CursorInfo:
         self.album = selected_album
         self.songs = songs
         self.state = state
+        self.playing = playing
 
 def main(window):
-    (height, width) = window.getmaxyx()
-    leftWinWidth = int((width / 3) + 1)
-    midWinWidth = int(leftWinWidth + 2)
-    rightWinWidth = int(width - (leftWinWidth + midWinWidth) + 2)
-    leftWin = window.subwin(height - 10, leftWinWidth, 0, 0)
-    midWin = window.subwin(height - 10, midWinWidth, 0, leftWinWidth - 1)
-    rightWin = window.subwin(height - 10, rightWinWidth, 0, int(leftWinWidth + midWinWidth - 2))
+    # Create a cursor object and some list objects
     cursor = CursorInfo(1, 0)
     file_list = os.listdir(path)
     file_list = [pathlib.Path(filename) for filename in file_list]
     artist_list = sorted([path for path in file_list if path.is_dir()])
+
+    # Set up some basic curses settings like the colours and how it behaves on keypresses
     curses.noecho()
     curses.curs_set(0)
     window.keypad(1)
-    curses.use_default_colors() # Use the default terminal colours
+    curses.use_default_colors() 
+
+    # Get the height and width of the window and set the width of the sub windows
+    (height, width) = window.getmaxyx()
+    leftWinWidth = int((width / 3) + 1)
+    midWinWidth = int(leftWinWidth + 2)
+    rightWinWidth = int(width - (leftWinWidth + midWinWidth) + 2)
+
+    # Create the subwindows
+    leftWin = window.subwin(height - 10, leftWinWidth, 0, 0)
+    midWin = window.subwin(height - 10, midWinWidth, 0, leftWinWidth - 1)
+    rightWin = window.subwin(height - 10, rightWinWidth, 0, int(leftWinWidth + midWinWidth - 2))
+    bottomWin = window.subwin(10, width, height - 10, 0)
+
+    # Box the windows
     window.box()
     leftWin.box()
     midWin.box()
     rightWin.box()
+    bottomWin.box()
+
+    # Refresh the newly boxed windows
     window.refresh()
     leftWin.refresh()
     midWin.refresh()
     rightWin.refresh()
-    #TODO Could reformat the functions to be more dynamic seeing as they need to have 3 lists and a dynamic interface
+    bottomWin.refresh()
 
     def list_artist(artist_list):
        for (number, artist) in enumerate(artist_list, start=1):
@@ -76,13 +90,16 @@ def main(window):
 
     def list_song(song_list): #List albums in the artist window (left) and songs in the album window (right)
        for (number, song) in enumerate(song_list, start=1):
-           rightWin.addstr(number, 2, str(song.name), curses.A_REVERSE if (cursor.rightY == number) else 0)
+           rightWin.addstr(number, 2, str(song.name.strip(".mp3")), curses.A_REVERSE if (cursor.rightY == number) else 0)
        rightWin.refresh()
 
     def main_menu(artist_list):
+        song = None
         (height, width) = window.getmaxyx()
-        width = int(width / 2)
         while True: 
+            songLen = len(str(song))
+            songLen = int(songLen / 2)
+            # Check the cursor state and list the necessary information
             if cursor.state == ScreenState.SelectingArtist:
                 list_artist(artist_list)
             elif cursor.state == ScreenState.SelectingAlbum:
@@ -92,12 +109,16 @@ def main(window):
             else:
                 assert False
 
-           #if playing == True:
-           #    window.addstr(width, 20, "Playing")
-           #elif playing == False:
-           #    print ("Paused")
-           #else:
-           #    pass
+            # if it's playing, say "playing," if not, say "paused"
+            # still a little janky/flickery, maybe should tweak some more
+            if cursor.playing == True:
+                bottomWin.addstr(1, int((width / 2) - songLen - 9), "Currently playing: " + str(song))
+                bottomWin.refresh()
+            elif cursor.playing == None:
+                bottomWin.addstr(1, int((width / 2) - songLen - 9), "Currently paused: " + str(song))
+                bottomWin.refresh()
+            else:
+                pass
 
             window.move(cursor.leftY, 2)
             window.refresh()
@@ -168,33 +189,50 @@ def main(window):
                     assert False
 
             elif key == " ":
-                song = None
                 Player.stop()
                 time.sleep(0.1) # Give the previous process time to die, should it need it. just a bandaid fix on two processes running for now. will do something proper later
                 if cursor.state == ScreenState.SelectingArtist:
                     song = (path / artist_list[cursor.leftY - 1])
                     Player.play(song)
-                    playing = True
+                    song = (artist_list[cursor.leftY - 1])
+                    cursor.playing = True
+                    bottomWin.clear()
+                    bottomWin.box()
+                    bottomWin.refresh()
                 elif cursor.state == ScreenState.SelectingAlbum:
                     song = (path / artist_albums[cursor.midY - 1])
                     Player.play(song)
-                    playing = True
+                    song = (artist_albums[cursor.midY - 1])
+                    cursor.playing = True
+                    bottomWin.clear()
+                    bottomWin.box()
+                    bottomWin.refresh()
                 elif cursor.state == ScreenState.SelectingSong:
                     song = (path / song_list[cursor.rightY - 1])
                     Player.play(song)
-                    playing = True
+                    song = (song_list[cursor.rightY - 1]) # want to strip the leading "00 " and trailing ".mp3" from the string
+                    song = str(song)
+                    song = str(song.strip(".mp3"))
+                    cursor.playing = True
+                    bottomWin.clear()
+                    bottomWin.box()
+                    bottomWin.refresh()
                 else:
                     pass
 
             elif key == "p":
-                if playing == False:
+                if cursor.playing:
                     Player.play_pause()
-                    playing = True
-                elif playing == True:
-                    Player.play_pause()
-                    playing = False
+                    cursor.playing = None
+                    bottomWin.clear()
+                    bottomWin.box()
+                    bottomWin.refresh()
                 else:
-                    pass
+                    Player.play_pause()
+                    cursor.playing = True
+                    bottomWin.clear()
+                    bottomWin.box()
+                    bottomWin.refresh()
 
             elif key == "[":
                 Player.skip_back()
@@ -202,13 +240,14 @@ def main(window):
             elif key == "]":
                 Player.skip_forward()
 
+            elif key == "f":
+                Player.stop()
+
             else:
                 pass
 
     main_menu(artist_list)
 
-#path = pathlib.Path(sys.argv[0]).resolve()
-#path = path.parent / ".." / "music"
 path = Config.Music_Path
 os.chdir(path)
 curses.wrapper(main)
