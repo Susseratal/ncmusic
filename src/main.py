@@ -223,11 +223,11 @@ def main(window):
                     bottomWin.box()
                     bottomWin.refresh()
                 elif cursor.state == ScreenState.SelectingSong:
-                    song = (path / song_list[cursor.rightY - 1])
+                    song = (path / song_list[cursor.rightY + cursor.songListScrollPos - 1])
                     Player.play(song)
-                    song = (song_list[cursor.rightY - 1]) # want to strip the leading "00 " and trailing ".mp3" from the string
+                    song = (song_list[cursor.rightY + cursor.songListScrollPos - 1]) # want to strip the leading "00 " and trailing ".mp3" from the string
                     song = str(song)
-                    song = str(song.strip(".mp3"))
+                    song = str(song.removesuffix(".mp3"))
                     cursor.playing = True
                     bottomWin.clear()
                     bottomWin.box()

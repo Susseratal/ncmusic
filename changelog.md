@@ -37,10 +37,13 @@ Done:
         - [x] don't crash when song names are long?? Maybe fixed??
         - [x] Fixed bug with removing .mp3 from the end of files. Now uses string.removesuffix()
         - [x] Added scrolling in song win
+        - [x] Fixed quitting out bug
+
 To do:
 
         - [ ] scrolling in album and artist win
-        - [ ] don't crash when song names are long
+        - [ ] fix formatting when song names are long
+        - [ ] Trim leading characters properly
         - [ ] music progress bar
         - [ ] Package application
         - [ ] Shell script for exectution?
