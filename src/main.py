@@ -29,7 +29,7 @@ class ScreenState(Enum): #Assign numbers to variables that represent state
     SelectingSong = auto()
 
 class CursorInfo:
-    def __init__(self, leftY=0, midY=0, rightY=0, selected_artist=None, selected_album=None, songs=None, state=ScreenState.SelectingArtist, playing=None):
+    def __init__(self, leftY=0, midY=0, rightY=0, selected_artist=None, selected_album=None, songs=None, state=ScreenState.SelectingArtist, playing=None, songListScrollPos=0):
         self.leftY = leftY
         self.midY = midY
         self.rightY = rightY
@@ -38,6 +38,7 @@ class CursorInfo:
         self.songs = songs
         self.state = state
         self.playing = playing
+        self.songListScrollPos = songListScrollPos
 
 def main(window):
     # Create a cursor object and some list objects
@@ -57,6 +58,7 @@ def main(window):
     leftWinWidth = int((width / 3) + 1)
     midWinWidth = int(leftWinWidth + 2)
     rightWinWidth = int(width - (leftWinWidth + midWinWidth) + 2)
+    topWinHeight = int(height - 11)
 
     # Create the subwindows
     leftWin = window.subwin(height - 10, leftWinWidth, 0, 0)
@@ -79,19 +81,20 @@ def main(window):
     bottomWin.refresh()
 
     def list_artist(artist_list):
-       for (number, artist) in enumerate(artist_list, start=1):
-           leftWin.addstr(number, 2, str(artist), curses.A_REVERSE if (cursor.leftY == number) else 0)
-       leftWin.refresh()
+        for (number, artist) in enumerate(artist_list, start=1):
+            leftWin.addstr(number, 2, str(artist), curses.A_REVERSE if (cursor.leftY == number) else 0)
+        leftWin.refresh()
 
     def list_album(artist_albums):
-       for (number, album) in enumerate(artist_albums, start=1): 
-           midWin.addstr(number, 2, str(album.name), curses.A_REVERSE if (cursor.midY == number) else 0)
-       midWin.refresh()
+        for (number, album) in enumerate(artist_albums, start=1): 
+            midWin.addstr(number, 2, str(album.name), curses.A_REVERSE if (cursor.midY == number) else 0)
+        midWin.refresh()
 
     def list_song(song_list): #List albums in the artist window (left) and songs in the album window (right)
-       for (number, song) in enumerate(song_list, start=1):
-           rightWin.addstr(number, 2, str(song.name.removesuffix(".mp3")), curses.A_REVERSE if (cursor.rightY == number) else 0)
-       rightWin.refresh()
+        sliceEnd = cursor.songListScrollPos + topWinHeight - 1
+        for (number, song) in enumerate(song_list[cursor.songListScrollPos:sliceEnd], start=1):
+            rightWin.addstr(number, 2, str(song.name.removesuffix(".mp3")), curses.A_REVERSE if (cursor.rightY == number) else 0)
+        rightWin.refresh()
 
     def main_menu(artist_list):
         song = None
@@ -156,6 +159,12 @@ def main(window):
                     cursor.midY = min(len(artist_albums), cursor.midY + 1)
                 elif cursor.state == ScreenState.SelectingSong:
                     cursor.rightY = min(len(song_list), cursor.rightY + 1)
+                    if cursor.rightY >= topWinHeight:
+                        rightWin.clear()
+                        rightWin.box()
+                        cursor.rightY -= 1
+                        if (cursor.songListScrollPos + topWinHeight) <= len(song_list): # Scroll position + height of window = num of last item on screen
+                            cursor.songListScrollPos += 1
                 else:
                     assert False
 
@@ -165,7 +174,13 @@ def main(window):
                 elif cursor.state == ScreenState.SelectingAlbum:
                     cursor.midY = max(1, cursor.midY - 1)
                 elif cursor.state == ScreenState.SelectingSong:
-                    cursor.rightY = max(1, cursor.rightY - 1)
+                    cursor.rightY = (cursor.rightY - 1)
+                    if cursor.rightY == 0: # rightY has gone off the top of the screen
+                        rightWin.clear()
+                        rightWin.box()
+                        cursor.rightY += 1
+                        if cursor.songListScrollPos > 0:
+                            cursor.songListScrollPos -= 1
                 else:
                     assert False
 

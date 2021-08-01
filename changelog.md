@@ -36,10 +36,10 @@ Done:
         - [x] rearrange the windows so it's a 3 window layout (testing using dupe.py)
         - [x] don't crash when song names are long?? Maybe fixed??
         - [x] Fixed bug with removing .mp3 from the end of files. Now uses string.removesuffix()
-
+        - [x] Added scrolling in song win
 To do:
 
-        - [ ] scrolling
+        - [ ] scrolling in album and artist win
         - [ ] don't crash when song names are long
         - [ ] music progress bar
         - [ ] Package application
