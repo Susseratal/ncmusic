@@ -1,15 +1,3 @@
-###############################################
-#                                   _         #
-#    _ __   ___ _ __ ___  _   _ ___(_) ___    #
-#   | '_ \ / __| '_ ` _ \| | | / __| |/ __|   #
-#   | | | | (__| | | | | | |_| \__ \ | (__    #
-#   |_| |_|\___|_| |_| |_|\__,_|___/_|\___|   #
-#                                             #
-###############################################
-#/usr/bin/env python
-# try and make it a 3 window layout
-# new and broken
-
 import curses
 import glob
 import os
@@ -18,7 +6,7 @@ import pathlib
 import sys
 import time
 from enum import Enum, auto
-from players import MPVPlayer
+from modules import MPVPlayer
 from conf import config
 Config = config()
 Player = MPVPlayer(Config.MPV_Path, None)
@@ -28,8 +16,8 @@ class ScreenState(Enum): #Assign numbers to variables that represent state
     SelectingAlbum = auto()
     SelectingSong = auto()
 
-class CursorInfo:
-    def __init__(self, leftY=0, midY=0, rightY=0, selected_artist=None, selected_album=None, songs=None, state=ScreenState.SelectingArtist, playing=None, songListScrollPos=0):
+class CursorInfo(object):
+    def __init__(self, leftY=0, midY=0, rightY=0, selected_artist=None, selected_album=None, songs=None, state=ScreenState.SelectingArtist, playing=None, artistPos=0, albumPos=0, songPos=0):
         self.leftY = leftY
         self.midY = midY
         self.rightY = rightY
@@ -38,7 +26,32 @@ class CursorInfo:
         self.songs = songs
         self.state = state
         self.playing = playing
-        self.songListScrollPos = songListScrollPos
+        self.artistPos = artistPos
+        self.albumPos = albumPos
+        self.songPos = songPos
+
+class Scrolling(CursorInfo):
+    @staticmethod
+    def ScrollDown(cursorPos, ListPosition, selList, selectedWindow, WinMax):
+        if cursorPos >= WinMax:
+            selectedWindow.clear()
+            selectedWindow.box()
+            cursorPos -= 1
+            if (ListPosition + WinMax) <= len(selList): # Scroll position + height of window = num of last item on screen
+                ListPosition += 1
+
+# needs doing
+#
+#   def ScrollUp():
+#       if cursor.rightY == 0: # rightY has gone off the top of the screen
+#           rightWin.clear()
+#           rightWin.box()
+#           cursor.rightY += 1
+#           if cursor.songListScrollPos > 0:
+#               cursor.songListScrollPos -= 1
+#
+# needs doing
+
 
 def main(window):
     # Create a cursor object and some list objects
@@ -61,7 +74,7 @@ def main(window):
     topWinHeight = int(height - 11)
 
     # Create the subwindows
-    leftWin = window.subwin(height - 10, leftWinWidth, 0, 0)
+    leftWin = window.subwin(height -10, leftWinWidth, 0, 0)
     midWin = window.subwin(height - 10, midWinWidth, 0, leftWinWidth - 1)
     rightWin = window.subwin(height - 10, rightWinWidth, 0, int(leftWinWidth + midWinWidth - 2))
     bottomWin = window.subwin(10, width, height - 10, 0)
@@ -81,18 +94,20 @@ def main(window):
     bottomWin.refresh()
 
     def list_artist(artist_list):
-        for (number, artist) in enumerate(artist_list, start=1):
+        artistSliceEnd = CursorInfo().artistPos + topWinHeight - 1
+        for (number, artist) in enumerate(artist_list[cursor.artistPos:artistSliceEnd], start=1):
             leftWin.addstr(number, 2, str(artist), curses.A_REVERSE if (cursor.leftY == number) else 0)
         leftWin.refresh()
 
     def list_album(artist_albums):
-        for (number, album) in enumerate(artist_albums, start=1): 
+        albumSliceEnd = CursorInfo().albumPos + topWinHeight - 1
+        for (number, album) in enumerate(artist_albums[cursor.albumPos:albumSliceEnd], start=1): 
             midWin.addstr(number, 2, str(album.name), curses.A_REVERSE if (cursor.midY == number) else 0)
         midWin.refresh()
 
     def list_song(song_list): #List albums in the artist window (left) and songs in the album window (right)
-        sliceEnd = cursor.songListScrollPos + topWinHeight - 1
-        for (number, song) in enumerate(song_list[cursor.songListScrollPos:sliceEnd], start=1):
+        songSliceEnd = CursorInfo().songPos + topWinHeight - 1
+        for (number, song) in enumerate(song_list[cursor.songPos:songSliceEnd], start=1):
             rightWin.addstr(number, 2, str(song.name.removesuffix(".mp3")), curses.A_REVERSE if (cursor.rightY == number) else 0)
         rightWin.refresh()
 
@@ -123,8 +138,6 @@ def main(window):
             else:
                 pass
 
-            window.move(cursor.leftY, 2)
-            window.refresh()
             try:
                 key = window.getkey()
             except curses.error:
@@ -159,12 +172,15 @@ def main(window):
                     cursor.midY = min(len(artist_albums), cursor.midY + 1)
                 elif cursor.state == ScreenState.SelectingSong:
                     cursor.rightY = min(len(song_list), cursor.rightY + 1)
-                    if cursor.rightY >= topWinHeight:
-                        rightWin.clear()
-                        rightWin.box()
-                        cursor.rightY -= 1
-                        if (cursor.songListScrollPos + topWinHeight) <= len(song_list): # Scroll position + height of window = num of last item on screen
-                            cursor.songListScrollPos += 1
+                    Scrolling.ScrollDown(cursor.rightY, CursorInfo().songPos, song_list, rightWin, topWinHeight)
+
+                   #if cursor.rightY >= topWinHeight:
+                   #    rightWin.clear()
+                   #    rightWin.box()
+                   #    cursor.rightY -= 1
+                   #    if (cursor.songListScrollPos + topWinHeight) <= len(song_list): # Scroll position + height of window = num of last item on screen
+                   #        cursor.songListScrollPos += 1
+
                 else:
                     assert False
 
