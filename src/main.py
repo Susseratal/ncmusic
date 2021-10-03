@@ -230,10 +230,10 @@ def main(window):
     artist_list = sorted([path for path in file_list if path.is_dir()])
 
     # Set up some basic curses settings like the colours and how it behaves on keypresses
-    curses.noecho()
-    curses.curs_set(0)
-    window.keypad(1)
-    curses.use_default_colors() 
+    curses.noecho() # Don't echo keypresses
+    curses.curs_set(0) # Set cursor to invisible
+    window.keypad(1) # Keyboard stuff will be interpreted by Curses
+    curses.use_default_colors()  # Use the terminal's configured colours
 
     mainwindow = Screen(window, artist_list)
     bottomWin = mainwindow.bottomWin # TODO
@@ -302,9 +302,19 @@ def main(window):
                 mainwindow.move_up()
 
             elif key == "l":
-                artist = mainwindow.get_selected_item()
-                artist_albums = list(sorted(artist.iterdir()))
-                mainwindow.move_right(artist_albums)
+                if mainwindow.state == :
+                    artist = mainwindow.get_selected_item()
+                    artist_albums = list(sorted(artist.iterdir()))
+                    mainwindow.move_right(artist_albums)
+                    ScreenState += 1
+                elif mainwindow.state == ScreenState.SelectingAlbum:
+                    album = mainwindow.get_selected_item()
+                    album_songs = list(sorted(album.iterdir()))
+                    mainwindow.move_right(album_songs)
+                    ScreenState += 1
+                else:
+                    curses.beep()
+
 #               if cursor.state == ScreenState.SelectingSong: #looking at songs
 #                   curses.beep()
 #               elif cursor.state == ScreenState.SelectingArtist:
