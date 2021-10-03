@@ -327,3 +327,4 @@ def main(window):
 path = Config.Music_Path
 os.chdir(path)
 curses.wrapper(main)
+print ("please ignore this i'm just trying to merge properly")
