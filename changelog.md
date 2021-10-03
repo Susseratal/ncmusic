@@ -39,6 +39,7 @@ Done:
         - [x] Added scrolling in song win
         - [x] Fixed quitting out bug
         - [x] scrolling in album and artist win
+        - [x] Need to set up a method for that
 
 To do:
 
@@ -46,6 +47,7 @@ To do:
         - [ ] tidy up EVERYTHING
         - [ ] fix formatting when song names are long
         - [ ] Trim leading characters properly
+        - [ ] get playing working (again)
         - [ ] music progress bar
         - [ ] Package application
         - [ ] Shell script for exectution?
