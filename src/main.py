@@ -169,10 +169,10 @@ def main(window):
     artist_list = sorted([path for path in file_list if path.is_dir()])
 
     # Set up some basic curses settings like the colours and how it behaves on keypresses
-    curses.noecho() # Don't echo keypresses
-    curses.curs_set(0) # Set cursor to invisible
-    window.keypad(1) # Keyboard stuff will be interpreted by Curses
-    curses.use_default_colors()  # Use the terminal's configured colours
+    curses.noecho()
+    curses.curs_set(0)
+    window.keypad(1)
+    curses.use_default_colors() 
 
     mainwindow = Screen(window, artist_list)
     bottomWin = mainwindow.bottomWin # TODO
@@ -241,48 +241,16 @@ def main(window):
                 mainwindow.move_up()
 
             elif key == "l":
-<<<<<<< HEAD
-                if mainwindow.state == :
-                    artist = mainwindow.get_selected_item()
-                    artist_albums = list(sorted(artist.iterdir()))
-                    mainwindow.move_right(artist_albums)
-                    ScreenState += 1
-=======
                 if mainwindow.state == ScreenState.SelectingArtist:
                     artist = mainwindow.get_selected_item()
                     artist_albums = list(sorted(artist.iterdir()))
                     mainwindow.move_right(artist_albums)
->>>>>>> 50875932c04d50d2f7a8d4222be54cccfc2374ae
                 elif mainwindow.state == ScreenState.SelectingAlbum:
                     album = mainwindow.get_selected_item()
                     album_songs = list(sorted(album.iterdir()))
                     mainwindow.move_right(album_songs)
-<<<<<<< HEAD
-                    ScreenState += 1
                 else:
                     curses.beep()
-
-#               if cursor.state == ScreenState.SelectingSong: #looking at songs
-#                   curses.beep()
-#               elif cursor.state == ScreenState.SelectingArtist:
-#                   cursor.midY = (1)
-#                   cursor.artist = artist_list[cursor.leftY - 1] #Assign cursor.album as the currently selected item in the albums list
-#                   artist_albums = list(sorted(cursor.artist.iterdir()))
-#                   cursor.state = ScreenState.SelectingAlbum
-#               elif cursor.state == ScreenState.SelectingAlbum:
-#                   cursor.rightY = (1)
-#                   rightWin.clear()
-#                   rightWin.box()
-#                   rightWin.refresh()
-#                   cursor.album = artist_albums[cursor.midY - 1]
-#                   song_list = list(sorted(cursor.album.iterdir()))
-#                   cursor.state = ScreenState.SelectingSong
-#               else: 
-#                   assert False
-=======
-                else:
-                    curses.beep()
->>>>>>> 50875932c04d50d2f7a8d4222be54cccfc2374ae
 
             elif key == " ":
                 Player.stop()
