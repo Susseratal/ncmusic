@@ -22,26 +22,9 @@ class ScreenState: #Assign numbers to variables that represent state
 #       self.x = x                                                                                           #
 #       self.y = y                                                                                           #
 #       self.z = z                                                                                           #
+#   Information about writing a class, btw. this is an initialiser. it would help if I wrote these things    #
 #                                                                                                            #
 ##############################################################################################################
-
-#   class Scrolling(CursorInfo):
-#       @staticmethod
-#       def ScrollDown(cursorPos, ListPosition, selList, selectedWindow, WinMax):
-#           if cursorPos >= WinMax:
-#               selectedWindow.clear()
-#               selectedWindow.box()
-#               cursorPos -= 1
-#               if (ListPosition + WinMax) <= len(selList): # Scroll position + height of window = num of last item on screen
-#                   ListPosition += 1
-
-#       def ScrollUp():
-#           if cursor.rightY == 0: # rightY has gone off the top of the screen
-#               rightWin.clear()
-#               rightWin.box()
-#               cursor.rightY += 1
-#               if cursor.songListScrollPos > 0:
-#                   cursor.songListScrollPos -= 1
 
 class CursorInfo(object):
     def __init__(self, leftY=0, midY=0, rightY=0, selected_artist=None, selected_album=None, songs=None, state=ScreenState.SelectingArtist, playing=None, artistPos=0, albumPos=0, songPos=0):
@@ -57,51 +40,7 @@ class CursorInfo(object):
         self.albumPos = albumPos
         self.songPos = songPos
 
-#   class Scrolling():
-#       def __init__(self, leftWin, midWin, rightWin):
-#           self.leftWin = artistWin
-#           self.midWin = albumWin
-#           self.rightWin = songWin
-
-#       def ScrollDown(self):
-#           #send help
-#           pass
-
-#       def ScrollDown(self, cursorPos, ListPosition, selList, selectedWindow, WinMax):
-#           if cursorPos >= WinMax:
-#               selectedWindow.clear()
-#               selectedWindow.box()
-#               cursorPos -= 1
-#               if (ListPosition + WinMax) <= len(selList): # Scroll position + height of window = num of last item on screen
-#                   ListPosition += 1
-
-#       def ScrollUp(self, cursorPos, ListPosition, selList, selectedWindow, WinMax):
-#           if cursor.rightY == 0: # rightY has gone off the top of the screen
-#               rightWin.clear()
-#               rightWin.box()
-#               cursor.rightY += 1
-#               if cursor.songListScrollPos > 0:
-#                   cursor.songListScrollPos -= 1
-
-#   def list_artist(artist_list):
-#       artistSliceEnd = CursorInfo().artistPos + topWinHeight - 1
-#       for (number, artist) in enumerate(artist_list[cursor.artistPos:artistSliceEnd], start=1):
-#           leftWin.addstr(number, 2, str(artist), curses.A_REVERSE if (cursor.leftY == number) else 0)
-#       leftWin.refresh()
-
-#   def list_album(artist_albums):
-#       albumSliceEnd = CursorInfo().albumPos + topWinHeight - 1
-#       for (number, album) in enumerate(artist_albums[cursor.albumPos:albumSliceEnd], start=1): 
-#           midWin.addstr(number, 2, str(album.name), curses.A_REVERSE if (cursor.midY == number) else 0)
-#       midWin.refresh()
-
-#   def list_song(song_list): #List albums in the artist window (left) and songs in the album window (right)
-#       songSliceEnd = CursorInfo().songPos + topWinHeight - 1
-#       for (number, song) in enumerate(song_list[cursor.songPos:songSliceEnd], start=1):
-#           rightWin.addstr(number, 2, str(song.name.removesuffix(".mp3")), curses.A_REVERSE if (cursor.rightY == number) else 0)
-#       rightWin.refresh()
-
-
+# Need to get rid of cursor info
 
 class ScrollMgr:
     def __init__(self, window): # Needs window to draw to and list of contents passed in)
@@ -219,7 +158,7 @@ class Screen:
             self.subwin = self.subwins[self.state]
 
     def get_selected_item(self):
-        return self.left.get_selected_item()
+        return self.subwin.get_selected_item()
 
  
 def main(window):
@@ -302,30 +241,32 @@ def main(window):
                 mainwindow.move_up()
 
             elif key == "l":
-                artist = mainwindow.get_selected_item()
-                artist_albums = list(sorted(artist.iterdir()))
-                mainwindow.move_right(artist_albums)
-#               if cursor.state == ScreenState.SelectingSong: #looking at songs
-#                   curses.beep()
-#               elif cursor.state == ScreenState.SelectingArtist:
-#                   cursor.midY = (1)
-#                   cursor.artist = artist_list[cursor.leftY - 1] #Assign cursor.album as the currently selected item in the albums list
-#                   artist_albums = list(sorted(cursor.artist.iterdir()))
-#                   cursor.state = ScreenState.SelectingAlbum
-#               elif cursor.state == ScreenState.SelectingAlbum:
-#                   cursor.rightY = (1)
-#                   rightWin.clear()
-#                   rightWin.box()
-#                   rightWin.refresh()
-#                   cursor.album = artist_albums[cursor.midY - 1]
-#                   song_list = list(sorted(cursor.album.iterdir()))
-#                   cursor.state = ScreenState.SelectingSong
-#               else: 
-#                   assert False
+                if mainwindow.state == ScreenState.SelectingArtist:
+                    artist = mainwindow.get_selected_item()
+                    artist_albums = list(sorted(artist.iterdir()))
+                    mainwindow.move_right(artist_albums)
+                elif mainwindow.state == ScreenState.SelectingAlbum:
+                    album = mainwindow.get_selected_item()
+                    album_songs = list(sorted(album.iterdir()))
+                    mainwindow.move_right(album_songs)
+                else:
+                    curses.beep()
 
             elif key == " ":
                 Player.stop()
                 time.sleep(0.1) # Give the previous process time to die, should it need it. just a bandaid fix on two processes running for now. will do something proper later
+                if mainwindow.state == ScreenState.SelectingArtist:
+                    pass
+                    # play some stuff
+                elif mainwindow.state == ScreenState.SelectingAlbum:
+                    pass
+                    # play some different stuff
+                elif mainwindow.state == ScreenState.SelectingSong:
+                    pass
+                    # play some different stuff again
+                else:
+                    assert False
+
                 if cursor.state == ScreenState.SelectingArtist:
                     song = (path / artist_list[cursor.leftY - 1])
                     Player.play(song)
