@@ -42,6 +42,7 @@ Done:
 To do:
 
         - [ ] scrolling in album and artist win
+        - [ ] Need to set up a method for that
         - [ ] fix formatting when song names are long
         - [ ] Trim leading characters properly
         - [ ] music progress bar
