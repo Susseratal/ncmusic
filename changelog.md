@@ -38,11 +38,17 @@ Done:
         - [x] Fixed bug with removing .mp3 from the end of files. Now uses string.removesuffix()
         - [x] Added scrolling in song win
         - [x] Fixed quitting out bug
+        - [x] scrolling in album and artist win
 
 To do:
 
+<<<<<<< HEAD
         - [ ] scrolling in album and artist win
         - [ ] Need to set up a method for that
+=======
+        - [ ] Pass songs into content for songWin
+        - [ ] tidy up EVERYTHING
+>>>>>>> dc668aa7f09293cc4f32c17254e397a0d0ef1bc3
         - [ ] fix formatting when song names are long
         - [ ] Trim leading characters properly
         - [ ] music progress bar
