@@ -255,46 +255,8 @@ def main(window):
             elif key == " ":
                 Player.stop()
                 time.sleep(0.1) # Give the previous process time to die, should it need it. just a bandaid fix on two processes running for now. will do something proper later
-                if mainwindow.state == ScreenState.SelectingArtist:
-                    pass
-                    # play some stuff
-                elif mainwindow.state == ScreenState.SelectingAlbum:
-                    pass
-                    # play some different stuff
-                elif mainwindow.state == ScreenState.SelectingSong:
-                    pass
-                    # play some different stuff again
-                else:
-                    assert False
-
-                if cursor.state == ScreenState.SelectingArtist:
-                    song = (path / artist_list[cursor.leftY - 1])
-                    Player.play(song)
-                    song = (artist_list[cursor.leftY - 1])
-                    cursor.playing = True
-                    bottomWin.clear()
-                    bottomWin.box()
-                    bottomWin.refresh()
-                elif cursor.state == ScreenState.SelectingAlbum:
-                    song = (path / artist_albums[cursor.midY - 1])
-                    Player.play(song)
-                    song = (artist_albums[cursor.midY - 1])
-                    cursor.playing = True
-                    bottomWin.clear()
-                    bottomWin.box()
-                    bottomWin.refresh()
-                elif cursor.state == ScreenState.SelectingSong:
-                    song = (path / song_list[cursor.rightY + cursor.songListScrollPos - 1])
-                    Player.play(song)
-                    song = (song_list[cursor.rightY + cursor.songListScrollPos - 1]) # want to strip the leading "00 " and trailing ".mp3" from the string
-                    song = str(song)
-                    song = str(song.removesuffix(".mp3"))
-                    cursor.playing = True
-                    bottomWin.clear()
-                    bottomWin.box()
-                    bottomWin.refresh()
-                else:
-                    pass
+                song = mainwindow.get_selected_item()
+                Player.play(song)
 
             elif key == "p":
                 if cursor.playing:
