@@ -15,17 +15,9 @@ class ScreenState: #Assign numbers to variables that represent state
     SelectingAlbum = 2
     SelectingSong = 3
 
-##############################################################################################################
-#                                                                                                            #
-#   Initialises X, Y and Z to 0 as default values, but other paramaters could be passed in if necessary      #
-#   def __init__(self, x=0, y=0, z=0):                                                                       #
-#       self.x = x                                                                                           #
-#       self.y = y                                                                                           #
-#       self.z = z                                                                                           #
-#   Information about writing a class, btw. this is an initialiser. it would help if I wrote these things    #
-#                                                                                                            #
-##############################################################################################################
-
+##########################################################################################################################################################
+# This is the thing I need to make obselete #
+##########################################################################################################################################################
 class CursorInfo(object):
     def __init__(self, leftY=0, midY=0, rightY=0, selected_artist=None, selected_album=None, songs=None, state=ScreenState.SelectingArtist, playing=None, artistPos=0, albumPos=0, songPos=0):
         self.leftY = leftY
@@ -39,12 +31,27 @@ class CursorInfo(object):
         self.artistPos = artistPos
         self.albumPos = albumPos
         self.songPos = songPos
+##########################################################################################################################################################
+# This is the thing I need to make obselete #
+##########################################################################################################################################################
 
-# Need to get rid of cursor info
+def formatter(path):
+    #do some more stuff
+    return path.upper()
+
+def formatted_albums(value, formatter):
+    change = formatter(value)
+    return change
+    #do something here
+
+def formatted_songs(value, formatter):
+    pass
+    #do something here
 
 class ScrollMgr:
-    def __init__(self, window): # Needs window to draw to and list of contents passed in)
+    def __init__(self, window, formatter): # Needs window to draw to and list of contents passed in)
         self.window = window
+        self.formatter = formatter
         self.win_height = self.window.getmaxyx()[0] - 1
         self.contents = []
         self.scrollY = 0
@@ -92,7 +99,7 @@ class ScrollMgr:
 
 
 class Screen:
-    def __init__(self, window, artistList):
+    def __init__(self, window, artistList): # Should probably swap artistList for "contents" or something variable? Unless I don't have to. will see
         # Get the height and width of the window and set the width of the sub windows
         (height, width) = window.getmaxyx()
         leftWinWidth = int((width / 3) + 1)
@@ -108,10 +115,10 @@ class Screen:
         self.bottomWin = bottomWin
 
         # Initialise the subwindows with contents and the windows to draw to
-        self.left = ScrollMgr(leftWin) # Give self.Left an instance of the ScrollMgr, with the left window
+        self.left = ScrollMgr(leftWin, formatter) # Give self.Left an instance of the ScrollMgr, with the left window
         self.left.set_contents(artistList) # Give the left window the contents "artistList"
-        self.mid = ScrollMgr(midWin)
-        self.right = ScrollMgr(rightWin)
+        self.mid = ScrollMgr(midWin, formatter)
+        self.right = ScrollMgr(rightWin, formatter)
         self.window = window
         self.state = ScreenState.SelectingArtist
         self.subwin = self.left
@@ -185,18 +192,6 @@ def main(window):
             songLen = int(songLen / 2)
             mainwindow.draw()
 
-#           Check the cursor state and list the necessary information
-#           if cursor.state == ScreenState.SelectingArtist:
-#               list_artist(artist_list)
-#           elif cursor.state == ScreenState.SelectingAlbum:
-#               list_album(artist_albums)
-#           elif cursor.state == ScreenState.SelectingSong:
-#               list_song(song_list)
-#           else:
-#               assert False
-
-            # if it's playing, say "playing," if not, say "paused"
-            # still a little janky/flickery, maybe should tweak some more
             if cursor.playing == True:
                 bottomWin.addstr(1, int((width / 2) - songLen - 9), "Currently playing: " + str(song))
                 bottomWin.refresh()
@@ -217,22 +212,6 @@ def main(window):
 
             elif key == "h":
                 mainwindow.move_left()
-#               if cursor.state == ScreenState.SelectingArtist:
-#                   curses.beep()
-#               elif cursor.state == ScreenState.SelectingAlbum:
-#                   midWin.clear()
-#                   midWin.box()
-#                   midWin.refresh()
-#                   cursor.album = None
-#                   cursor.state = ScreenState.SelectingArtist
-#               elif cursor.state == ScreenState.SelectingSong:
-#                   rightWin.clear()
-#                   rightWin.box()
-#                   rightWin.refresh()
-#                   cursor.artist = None
-#                   cursor.state = ScreenState.SelectingAlbum
-#               else:
-#                   assert False # Highlight if an unrecognised state has occurred
 
             elif key == "j":
                 mainwindow.move_down()
@@ -243,20 +222,23 @@ def main(window):
             elif key == "l":
                 if mainwindow.state == ScreenState.SelectingArtist:
                     artist = mainwindow.get_selected_item()
-                    artist_albums = list(sorted(artist.iterdir()))
+                    artist_list = artist.iterdir() #Need to strip this down from DIR/DIR2 to just DIR2
+                    artist_albums = list(sorted(artist_list))
                     mainwindow.move_right(artist_albums)
                 elif mainwindow.state == ScreenState.SelectingAlbum:
                     album = mainwindow.get_selected_item()
-                    album_songs = list(sorted(album.iterdir()))
+                    album_list = album.iterdir() #Need to strip this down from DIR/DIR2/MP3 to just MP3
+                    album_songs = list(sorted(album_list))
                     mainwindow.move_right(album_songs)
                 else:
                     curses.beep()
 
             elif key == " ":
                 Player.stop()
-                time.sleep(0.1) # Give the previous process time to die, should it need it. just a bandaid fix on two processes running for now. will do something proper later
+                time.sleep(0.1) 
                 song = mainwindow.get_selected_item()
                 Player.play(song)
+                # cursor.playing = True
 
             elif key == "p":
                 if cursor.playing:
@@ -289,4 +271,3 @@ def main(window):
 path = Config.Music_Path
 os.chdir(path)
 curses.wrapper(main)
-print ("please ignore this i'm just trying to merge properly")
