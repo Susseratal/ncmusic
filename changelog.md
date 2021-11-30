@@ -41,14 +41,12 @@ Done:
         - [x] scrolling in album and artist win
         - [x] Need to set up a method for that
         - [x] Fixed playing
+        - [x] fix formatting on text
+        - [x] Pass songs into content for songWin
 
 To do:
 
-        - [ ] fix formatting on text
-        - [ ] Pass songs into content for songWin
-        - [ ] tidy up EVERYTHING
+        - [ ] Completely remove the need for cursorInfo
         - [ ] fix formatting when song names are long
         - [ ] Trim leading characters properly
         - [ ] music progress bar
-        - [ ] Package application
-        - [ ] Shell script for exectution?

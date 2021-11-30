@@ -10,14 +10,15 @@ from conf import config
 Config = config()
 Player = MPVPlayer(Config.MPV_Path, None)
 
-class ScreenState: #Assign numbers to variables that represent state
+class ScreenState: # Assign numbers to variables that represent state
     SelectingArtist = 1
     SelectingAlbum = 2
-    SelectingSong = 3
+    SelectingSong = 3 # this allows you to increment and decrement things like any other number
 
 ##########################################################################################################################################################
 # This is the thing I need to make obselete #
 ##########################################################################################################################################################
+
 class CursorInfo(object):
     def __init__(self, leftY=0, midY=0, rightY=0, selected_artist=None, selected_album=None, songs=None, state=ScreenState.SelectingArtist, playing=None, artistPos=0, albumPos=0, songPos=0):
         self.leftY = leftY
@@ -31,25 +32,33 @@ class CursorInfo(object):
         self.artistPos = artistPos
         self.albumPos = albumPos
         self.songPos = songPos
+
 ##########################################################################################################################################################
 # This is the thing I need to make obselete #
 ##########################################################################################################################################################
 
-def formatter(path):
-    #do some more stuff
-    return path.upper()
+def artist_formatter(path):
+    return path
 
-def formatted_albums(value, formatter):
-    change = formatter(value)
-    return change
+def album_formatter(path):
+    song = str(path)
+    song = song.split("/")[1]
+    # song = str(path.removeprefix("/")) 
+    return song
+
+def song_formatter(path):
+    song = str(path)
+    song = song.split("/")[2]
+    song = song.removesuffix(".mp3")
+    return song
+
     #do something here
 
-def formatted_songs(value, formatter):
-    pass
-    #do something here
+# I literally do not understand how to set up a formatter. also my brain hurts
 
 class ScrollMgr:
-    def __init__(self, window, formatter): # Needs window to draw to and list of contents passed in)
+    # initialiser creates the local variables which the entire class is going to need
+    def __init__(self, window, formatter): # Needs window to draw to and list of contents passed in
         self.window = window
         self.formatter = formatter
         self.win_height = self.window.getmaxyx()[0] - 1
@@ -72,10 +81,10 @@ class ScrollMgr:
         self.clear_window()
         self.set_contents([])
 
-    def draw_win(self):
+    def draw_win(self, formatter):
         slice_end = self.scrollY + self.win_height - 1
         for (number, content) in enumerate(self.contents[self.scrollY:slice_end], start=1):
-            self.window.addstr(number, 2, str(content), curses.A_REVERSE if (self.cursorY == number) else 0)
+            self.window.addstr(number, 2, formatter(str(content)), curses.A_REVERSE if (self.cursorY == number) else 0)
         self.window.refresh()
 
     def move_down(self):
@@ -115,10 +124,10 @@ class Screen:
         self.bottomWin = bottomWin
 
         # Initialise the subwindows with contents and the windows to draw to
-        self.left = ScrollMgr(leftWin, formatter) # Give self.Left an instance of the ScrollMgr, with the left window
+        self.left = ScrollMgr(leftWin, artist_formatter) # Give self.Left an instance of the ScrollMgr, with the left window
         self.left.set_contents(artistList) # Give the left window the contents "artistList"
-        self.mid = ScrollMgr(midWin, formatter)
-        self.right = ScrollMgr(rightWin, formatter)
+        self.mid = ScrollMgr(midWin, album_formatter)
+        self.right = ScrollMgr(rightWin, song_formatter)
         self.window = window
         self.state = ScreenState.SelectingArtist
         self.subwin = self.left
@@ -142,9 +151,9 @@ class Screen:
         bottomWin.refresh()
 
     def draw(self):
-        self.left.draw_win()
-        self.mid.draw_win()
-        self.right.draw_win()
+        self.left.draw_win(artist_formatter)
+        self.mid.draw_win(album_formatter)
+        self.right.draw_win(song_formatter)
 
     def move_down(self):
         self.subwin.move_down()
@@ -170,10 +179,10 @@ class Screen:
  
 def main(window):
     # Create a cursor object and some list objects
-    cursor = CursorInfo(1, 0)
-    file_list = os.listdir(path)
-    file_list = [pathlib.Path(filename) for filename in file_list]
-    artist_list = sorted([path for path in file_list if path.is_dir()])
+    cursor = CursorInfo(1, 0) # I really want to get rid of this cursor info object
+    file_list = os.listdir(path) # Assigns file_list as the contents of the path
+    file_list = [pathlib.Path(filename) for filename in file_list] # Get the name of every directory on the path
+    artist_list = sorted([path for path in file_list if path.is_dir()]) # wtf does this do?
 
     # Set up some basic curses settings like the colours and how it behaves on keypresses
     curses.noecho()
@@ -222,7 +231,7 @@ def main(window):
             elif key == "l":
                 if mainwindow.state == ScreenState.SelectingArtist:
                     artist = mainwindow.get_selected_item()
-                    artist_list = artist.iterdir() #Need to strip this down from DIR/DIR2 to just DIR2
+                    artist_list = artist.iterdir() #Need to strip this down from DIR/DIR2 to just DIR2 - use formatter I guess
                     artist_albums = list(sorted(artist_list))
                     mainwindow.move_right(artist_albums)
                 elif mainwindow.state == ScreenState.SelectingAlbum:
@@ -238,7 +247,7 @@ def main(window):
                 time.sleep(0.1) 
                 song = mainwindow.get_selected_item()
                 Player.play(song)
-                # cursor.playing = True
+                cursor.playing = True
 
             elif key == "p":
                 if cursor.playing:
