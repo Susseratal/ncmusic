@@ -47,6 +47,7 @@ Done:
 To do:
 
         - [ ] Completely remove the need for cursorInfo
-        - [ ] fix formatting when song names are long
-        - [ ] Trim leading characters properly
+        - [ ] Truncate long song names
+        - [ ] Maybe trim leading characters properly?
         - [ ] music progress bar
+        - [ ] Basically fix the entire bottom window - it needs a lot of attention
