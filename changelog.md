@@ -43,6 +43,7 @@ Done:
         - [x] Fixed playing
         - [x] fix formatting on text
         - [x] Pass songs into content for songWin
+        - [x] tidy up the formatter
 
 To do:
 

@@ -37,24 +37,17 @@ class CursorInfo(object):
 # This is the thing I need to make obselete #
 ##########################################################################################################################################################
 
-def artist_formatter(path):
+def formatter(state, path): # this system won't work because the formatter is just formatting the text - has no concept of the screen
+    if state == 1:
+        song = str(path)
+        path = song.split("/")[1]
+    elif state == 2:
+        song = str(path)
+        song = song.split("/")[2]
+        path = song.removesuffix(".mp3")
+    else:
+        pass
     return path
-
-def album_formatter(path):
-    song = str(path)
-    song = song.split("/")[1]
-    # song = str(path.removeprefix("/")) 
-    return song
-
-def song_formatter(path):
-    song = str(path)
-    song = song.split("/")[2]
-    song = song.removesuffix(".mp3")
-    return song
-
-    #do something here
-
-# I literally do not understand how to set up a formatter. also my brain hurts
 
 class ScrollMgr:
     # initialiser creates the local variables which the entire class is going to need
@@ -81,10 +74,10 @@ class ScrollMgr:
         self.clear_window()
         self.set_contents([])
 
-    def draw_win(self, formatter):
+    def draw_win(self, state, formatter):
         slice_end = self.scrollY + self.win_height - 1
         for (number, content) in enumerate(self.contents[self.scrollY:slice_end], start=1):
-            self.window.addstr(number, 2, formatter(str(content)), curses.A_REVERSE if (self.cursorY == number) else 0)
+            self.window.addstr(number, 2, formatter(state, str(content)), curses.A_REVERSE if (self.cursorY == number) else 0) # this is where the text gets formatted
         self.window.refresh()
 
     def move_down(self):
@@ -124,10 +117,10 @@ class Screen:
         self.bottomWin = bottomWin
 
         # Initialise the subwindows with contents and the windows to draw to
-        self.left = ScrollMgr(leftWin, artist_formatter) # Give self.Left an instance of the ScrollMgr, with the left window
+        self.left = ScrollMgr(leftWin, formatter) # Give self.Left an instance of the ScrollMgr, with the left window
         self.left.set_contents(artistList) # Give the left window the contents "artistList"
-        self.mid = ScrollMgr(midWin, album_formatter)
-        self.right = ScrollMgr(rightWin, song_formatter)
+        self.mid = ScrollMgr(midWin, formatter)
+        self.right = ScrollMgr(rightWin, formatter)
         self.window = window
         self.state = ScreenState.SelectingArtist
         self.subwin = self.left
@@ -151,9 +144,9 @@ class Screen:
         bottomWin.refresh()
 
     def draw(self):
-        self.left.draw_win(artist_formatter)
-        self.mid.draw_win(album_formatter)
-        self.right.draw_win(song_formatter)
+        self.left.draw_win(0, formatter)
+        self.mid.draw_win(1, formatter)
+        self.right.draw_win(2, formatter)
 
     def move_down(self):
         self.subwin.move_down()
