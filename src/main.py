@@ -15,28 +15,6 @@ class ScreenState: # Assign numbers to variables that represent state
     SelectingAlbum = 2
     SelectingSong = 3 # this allows you to increment and decrement things like any other number
 
-##########################################################################################################################################################
-# This is the thing I need to make obselete #
-##########################################################################################################################################################
-
-class CursorInfo(object):
-    def __init__(self, leftY=0, midY=0, rightY=0, selected_artist=None, selected_album=None, songs=None, state=ScreenState.SelectingArtist, playing=None, artistPos=0, albumPos=0, songPos=0):
-        self.leftY = leftY
-        self.midY = midY
-        self.rightY = rightY
-        self.artist = selected_artist
-        self.album = selected_album
-        self.songs = songs
-        self.state = state
-        self.playing = playing
-        self.artistPos = artistPos
-        self.albumPos = albumPos
-        self.songPos = songPos
-
-##########################################################################################################################################################
-# This is the thing I need to make obselete #
-##########################################################################################################################################################
-
 def formatter(state, path): # this system won't work because the formatter is just formatting the text - has no concept of the screen
     if state == 1:
         song = str(path)
@@ -171,8 +149,6 @@ class Screen:
 
  
 def main(window):
-    # Create a cursor object and some list objects
-    cursor = CursorInfo(1, 0) # I really want to get rid of this cursor info object
     file_list = os.listdir(path) # Assigns file_list as the contents of the path
     file_list = [pathlib.Path(filename) for filename in file_list] # Get the name of every directory on the path
     artist_list = sorted([path for path in file_list if path.is_dir()]) # wtf does this do?
@@ -188,16 +164,17 @@ def main(window):
 
     def main_menu(artist_list):
         song = None
+        playing = False 
         (height, width) = window.getmaxyx()
         while True: 
             songLen = len(str(song))
             songLen = int(songLen / 2)
             mainwindow.draw()
 
-            if cursor.playing == True:
+            if playing == True:
                 bottomWin.addstr(1, int((width / 2) - songLen - 9), "Currently playing: " + str(song))
                 bottomWin.refresh()
-            elif cursor.playing == None:
+            elif playing == None:
                 bottomWin.addstr(1, int((width / 2) - songLen - 9), "Currently paused: " + str(song))
                 bottomWin.refresh()
             else:
@@ -240,18 +217,18 @@ def main(window):
                 time.sleep(0.1) 
                 song = mainwindow.get_selected_item()
                 Player.play(song)
-                cursor.playing = True
+                playing = True
 
             elif key == "p":
-                if cursor.playing:
+                if playing:
                     Player.play_pause()
-                    cursor.playing = None
+                    playing = None
                     bottomWin.clear()
                     bottomWin.box()
                     bottomWin.refresh()
                 else:
                     Player.play_pause()
-                    cursor.playing = True
+                    playing = True
                     bottomWin.clear()
                     bottomWin.box()
                     bottomWin.refresh()

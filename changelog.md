@@ -44,10 +44,10 @@ Done:
         - [x] fix formatting on text
         - [x] Pass songs into content for songWin
         - [x] tidy up the formatter
-
+        - [x] Completely remove the need for cursorInfo
+        - [x] I think this means I've kind of done with a bunch of this??
 To do:
 
-        - [ ] Completely remove the need for cursorInfo
         - [ ] Truncate long song names
         - [ ] Maybe trim leading characters properly?
         - [ ] music progress bar
