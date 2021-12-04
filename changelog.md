@@ -46,9 +46,12 @@ Done:
         - [x] tidy up the formatter
         - [x] Completely remove the need for cursorInfo
         - [x] I think this means I've kind of done with a bunch of this??
+        - [x] Truncate long song names - it crashes if they're too long
 To do:
 
-        - [ ] Truncate long song names
-        - [ ] Maybe trim leading characters properly?
+        - [ ] Proper exception handling
+        - [ ] extract metadata from music for progress bar etc
+        - [ ] Fix bug so playing a song plays the album from that point
         - [ ] music progress bar
+        - [ ] Figure out how to integrate it with my dwmbar.sh
         - [ ] Basically fix the entire bottom window - it needs a lot of attention

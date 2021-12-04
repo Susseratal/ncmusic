@@ -10,22 +10,35 @@ from conf import config
 Config = config()
 Player = MPVPlayer(Config.MPV_Path, None)
 
+def formatter(width, state, path): # this system won't work because the formatter is just formatting the text - has no concept of the screen
+    item = str(path)
+    if state == 1: # album
+        item = item.split("/")[1]
+        if len(item) >= width:
+            item = item[:width - 4]
+            item = (item + "...")
+        else:
+            pass
+    elif state == 2: # song
+        item = item.split("/")[2]
+        item = item.removesuffix(".mp3")
+        if len(item) >= width:
+            item = item[:width - 4]
+            item = (item + "...")
+        else:
+            pass
+    else: # anything else - or artist
+        if len(item) >= width:
+            item = item[:width - 4]
+            item = (item + "...")
+        else:
+            pass
+    return item
+
 class ScreenState: # Assign numbers to variables that represent state
     SelectingArtist = 1
     SelectingAlbum = 2
     SelectingSong = 3 # this allows you to increment and decrement things like any other number
-
-def formatter(state, path): # this system won't work because the formatter is just formatting the text - has no concept of the screen
-    if state == 1:
-        song = str(path)
-        path = song.split("/")[1]
-    elif state == 2:
-        song = str(path)
-        song = song.split("/")[2]
-        path = song.removesuffix(".mp3")
-    else:
-        pass
-    return path
 
 class ScrollMgr:
     # initialiser creates the local variables which the entire class is going to need
@@ -33,6 +46,7 @@ class ScrollMgr:
         self.window = window
         self.formatter = formatter
         self.win_height = self.window.getmaxyx()[0] - 1
+        self.win_width = self.window.getmaxyx()[1]
         self.contents = []
         self.scrollY = 0
         self.cursorY = 1
@@ -55,7 +69,7 @@ class ScrollMgr:
     def draw_win(self, state, formatter):
         slice_end = self.scrollY + self.win_height - 1
         for (number, content) in enumerate(self.contents[self.scrollY:slice_end], start=1):
-            self.window.addstr(number, 2, formatter(state, str(content)), curses.A_REVERSE if (self.cursorY == number) else 0) # this is where the text gets formatted
+            self.window.addstr(number, 2, formatter(self.win_width - 2, state, str(content)), curses.A_REVERSE if (self.cursorY == number) else 0) 
         self.window.refresh()
 
     def move_down(self):
