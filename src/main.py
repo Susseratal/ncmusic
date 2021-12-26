@@ -272,6 +272,9 @@ def main(window):
             elif key == "f":
                 Player.stop()
 
+            elif key in [";", ":"]:
+                pass
+
             else:
                 pass
 

@@ -53,6 +53,7 @@ To do:
         - [ ] Proper exception handling
         - [ ] extract metadata from music for progress bar etc
         - [ ] Fix bug so playing a song plays the album from that point
+        - [ ] Add search functionality - pressing ":" (or ";") enters a search box
         - [ ] music progress bar
         - [ ] Figure out how to integrate it with my dwmbar.sh
         - [ ] Ideally make it so resizing the window doesn't cause it to explode
