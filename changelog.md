@@ -1,4 +1,4 @@
-ncmusic Changelog
+ncmusic Changelog  
 Done:
 
         - [x] Path to directory, list files  
