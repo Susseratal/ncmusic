@@ -47,6 +47,7 @@ Done:
         - [x] Completely remove the need for cursorInfo
         - [x] I think this means I've kind of done with a bunch of this??
         - [x] Truncate long song names - it crashes if they're too long
+        - [x] Added g and G to jump to top or bottom of list
 To do:
 
         - [ ] Proper exception handling
@@ -54,4 +55,5 @@ To do:
         - [ ] Fix bug so playing a song plays the album from that point
         - [ ] music progress bar
         - [ ] Figure out how to integrate it with my dwmbar.sh
+        - [ ] Ideally make it so resizing the window doesn't cause it to explode
         - [ ] Basically fix the entire bottom window - it needs a lot of attention

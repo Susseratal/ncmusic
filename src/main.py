@@ -17,22 +17,16 @@ def formatter(width, state, path): # this system won't work because the formatte
         if len(item) >= width:
             item = item[:width - 4]
             item = (item + "...")
-        else:
-            pass
     elif state == 2: # song
         item = item.split("/")[2]
         item = item.removesuffix(".mp3")
         if len(item) >= width:
             item = item[:width - 4]
             item = (item + "...")
-        else:
-            pass
     else: # anything else - or artist
         if len(item) >= width:
             item = item[:width - 4]
             item = (item + "...")
-        else:
-            pass
     return item
 
 class ScreenState: # Assign numbers to variables that represent state
@@ -88,6 +82,16 @@ class ScrollMgr:
             if self.scrollY > 0:
                 self.scrollY -= 1
 
+    def set_top(self):
+        self.scrollY = 0
+        self.cursorY = 1
+        self.clear_window(refresh = True)
+
+    def set_bottom(self):
+        self.scrollY = max(0, len(self.contents) - self.win_height +1)
+        self.cursorY = min(len(self.contents), self.win_height -1)
+        self.clear_window(refresh = True)
+
     def get_selected_item(self):
         return self.contents[self.cursorY + self.scrollY - 1]
 
@@ -108,7 +112,7 @@ class Screen:
         bottomWin = window.subwin(10, width, height - 10, 0)
         self.bottomWin = bottomWin
 
-        # Initialise the subwindows with contents and the windows to draw to
+        # Initialise the subwindows with contents and the windows to d -1raw to
         self.left = ScrollMgr(leftWin, formatter) # Give self.Left an instance of the ScrollMgr, with the left window
         self.left.set_contents(artistList) # Give the left window the contents "artistList"
         self.mid = ScrollMgr(midWin, formatter)
@@ -157,6 +161,12 @@ class Screen:
             self.subwin.clear()
             self.state -= 1
             self.subwin = self.subwins[self.state]
+
+    def set_top(self):
+        self.subwin.set_top()
+
+    def set_bottom(self):
+        self.subwin.set_bottom()
 
     def get_selected_item(self):
         return self.subwin.get_selected_item()
@@ -215,16 +225,22 @@ def main(window):
             elif key == "l":
                 if mainwindow.state == ScreenState.SelectingArtist:
                     artist = mainwindow.get_selected_item()
-                    artist_list = artist.iterdir() #Need to strip this down from DIR/DIR2 to just DIR2 - use formatter I guess
+                    artist_list = artist.iterdir() 
                     artist_albums = list(sorted(artist_list))
                     mainwindow.move_right(artist_albums)
                 elif mainwindow.state == ScreenState.SelectingAlbum:
                     album = mainwindow.get_selected_item()
-                    album_list = album.iterdir() #Need to strip this down from DIR/DIR2/MP3 to just MP3
+                    album_list = album.iterdir() 
                     album_songs = list(sorted(album_list))
                     mainwindow.move_right(album_songs)
                 else:
                     curses.beep()
+
+            elif key == "g":
+                mainwindow.set_top()
+
+            elif key == "G":
+                mainwindow.set_bottom()
 
             elif key == " ":
                 Player.stop()
