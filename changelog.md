@@ -48,6 +48,7 @@ Done:
         - [x] I think this means I've kind of done with a bunch of this??
         - [x] Truncate long song names - it crashes if they're too long
         - [x] Added g and G to jump to top or bottom of list
+        - [x] Bandaid fixed the bottom window for now - very temporary
 To do:
 
         - [ ] Proper exception handling

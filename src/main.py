@@ -255,6 +255,9 @@ def main(window):
                 Player.stop()
                 time.sleep(0.1) 
                 song = mainwindow.get_selected_item()
+                bottomWin.clear()
+                bottomWin.box()
+                bottomWin.refresh()
                 Player.play(song)
                 playing = True
 
