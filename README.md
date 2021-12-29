@@ -26,6 +26,8 @@ The controls are vim based (or at least vim inspired), I'll probably make them c
         P == play/pause
         [ == skip back a track
         ] == skip forward a track
+        g == jump to top of list
+        G == jump to bottom of list
 
 note: Skipping forward and back only works when you've selected an entire artist or album to play. pressing play on track 2 of an album, for instance, just plays track 2, rather than the entire album starting from track 2  
 As I say, player is unfinished, but in the most baseline usable state

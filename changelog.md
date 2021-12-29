@@ -1,4 +1,4 @@
-ncmusic Changelog
+ncmusic Changelog  
 Done:
 
         - [x] Path to directory, list files  
@@ -47,11 +47,15 @@ Done:
         - [x] Completely remove the need for cursorInfo
         - [x] I think this means I've kind of done with a bunch of this??
         - [x] Truncate long song names - it crashes if they're too long
+        - [x] Added g and G to jump to top or bottom of list
+        - [x] Bandaid fixed the bottom window for now - very temporary
 To do:
 
         - [ ] Proper exception handling
         - [ ] extract metadata from music for progress bar etc
         - [ ] Fix bug so playing a song plays the album from that point
+        - [ ] Add search functionality - pressing ":" (or ";") enters a search box
         - [ ] music progress bar
         - [ ] Figure out how to integrate it with my dwmbar.sh
+        - [ ] Ideally make it so resizing the window doesn't cause it to explode
         - [ ] Basically fix the entire bottom window - it needs a lot of attention

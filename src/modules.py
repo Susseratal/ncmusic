@@ -66,7 +66,7 @@ class MPVPlayer(PlayerInterface):
     def __init__(self, exe, default_args):
         self.ipc_address = "/tmp/ncmusic.mpv-socket"
         if default_args is None:
-            default_args = ["--input-ipc-server=%s" % self.ipc_address, "--no-terminal", "--no-video"]
+            default_args = ["--input-ipc-server=%s" % self.ipc_address, "--no-terminal", "--no-video"] # somehow need to pass in a number for --playlist-start=n
         self.exe = exe
         self.name = "mpv"
         self.default_args = default_args
