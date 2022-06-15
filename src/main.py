@@ -8,6 +8,7 @@
 ###########################################
 
 import curses
+import random
 import glob
 import os
 import os.path
